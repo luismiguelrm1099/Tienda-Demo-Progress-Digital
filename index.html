@@ -1,0 +1,2630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PD Archive | Progress Digital</title>
+  <meta name="description" content="Interactive 3D spiral lookbook and full-bleed spatial streetwear showroom engineered by Progress Digital.">
+  <meta name="theme-color" content="#0B0D10">
+  <!-- DEPLOY STEP: Replace og:url and og:image with the live Coolify HTTPS domain -->
+  <meta property="og:title" content="PD Archive | Progress Digital">
+  <meta property="og:description" content="Full-bleed spatial streetwear showroom and WebGL2 spiral lookbook crafted by Progress Digital.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://example.com/">
+  <meta property="og:image" content="https://example.com/assets/logo.webp">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230B0D10'/%3E%3Cpath d='M18 45V21c0-4 3-7 7-7h10c5 0 9 4 9 9s-4 9-9 9h-8' fill='none' stroke='%2318C8F0' stroke-width='5' stroke-linecap='round'/%3E%3Cpath d='M46 19v24c0 4-3 7-7 7H29c-5 0-9-4-9-9' fill='none' stroke='%23F0F3F7' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Single cool-obsidian neutral ramp tinted softly toward steel/slate */
+      --bg: #0B0D10;
+      --bg-room: #101318;
+      --surface: #151920;
+      --surface-hover: #1B2029;
+      --hairline: rgba(240, 243, 247, 0.09);
+      --hairline-strong: rgba(240, 243, 247, 0.22);
+
+      /* Three disciplined ink roles */
+      --ink: #F3F5F8;
+      --ink-secondary: #99A3B2;
+      --ink-muted: #626D7C;
+
+      /* Brand cyan + Signal Industrial Yellow (split-complementary streetwear triad, 12.1:1 AAA contrast) */
+      --accent: #18C8F0;
+      --accent-soft: rgba(24, 200, 240, 0.14);
+      --signal: #F4C430;
+      --signal-bright: #FFD44F;
+      --signal-ink: #090B0E;
+
+      /* Neo-Grotesque tight display typography (Skiper UI character) */
+      --font-display: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-sans: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+      /* Kowalski motion curves */
+      --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+      --ease-io: cubic-bezier(0.77, 0, 0.175, 1);
+      --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    ::selection { background: var(--signal); color: var(--signal-ink); }
+
+    html {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--font-sans);
+      font-size: 16px;
+      line-height: 1.55;
+      overflow-x: hidden;
+      overflow-x: clip;
+      scroll-behavior: smooth;
+      scrollbar-color: #262D38 var(--bg);
+      scrollbar-width: thin;
+      -webkit-font-smoothing: antialiased;
+    }
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      overflow-x: hidden;
+      overflow-x: clip;
+      caret-color: var(--signal);
+    }
+    body.locked { overflow: hidden; }
+    body.paused *, body.paused *::before, body.paused *::after { animation-play-state: paused !important; }
+
+    a { color: inherit; text-underline-offset: 4px; }
+    button { font-family: inherit; color: inherit; }
+    :focus-visible { outline: 2px solid var(--signal); outline-offset: 3px; }
+    p { text-wrap: pretty; }
+
+    .num { font-variant-numeric: tabular-nums; }
+    .sr-only {
+      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+    }
+
+    .skip-link {
+      position: fixed; top: -80px; left: 20px; z-index: 900;
+      background: var(--signal); color: var(--signal-ink);
+      padding: 10px 18px; border-radius: 999px; font-size: 0.82rem; font-weight: 500;
+      text-decoration: none;
+      transition: top 180ms var(--ease-out);
+    }
+    .skip-link:focus { top: 16px; }
+
+    /* ================= QUIET TOP CHROME ================= */
+    .topbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 120;
+      height: 64px;
+      padding: 0 clamp(16px, 4vw, 48px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      background: linear-gradient(180deg, rgba(11, 13, 16, 0.9) 0%, rgba(11, 13, 16, 0) 100%);
+      transition: background 260ms var(--ease-out), border-color 260ms var(--ease-out);
+      border-bottom: 1px solid transparent;
+    }
+    .topbar.solid {
+      background: rgba(11, 13, 16, 0.94);
+      backdrop-filter: blur(12px);
+      border-bottom-color: var(--hairline);
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    .brand img {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+      display: block;
+    }
+    .brand-name {
+      font-size: 0.92rem;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+    }
+    .brand-by {
+      font-size: 0.78rem;
+      color: var(--ink-muted);
+      margin-left: 8px;
+      padding-left: 10px;
+      border-left: 1px solid var(--hairline);
+      white-space: nowrap;
+    }
+    .drop-dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--signal);
+      margin-left: 3px;
+      vertical-align: middle;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+    .nav-links a {
+      font-size: 0.84rem;
+      color: var(--ink-secondary);
+      text-decoration: none;
+      transition: color 180ms var(--ease-out);
+    }
+    .nav-links a.active { color: var(--ink); }
+    @media (hover: hover) and (pointer: fine) {
+      .nav-links a:hover { color: var(--ink); }
+    }
+
+    .top-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .lang-switch {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      font-size: 0.76rem;
+      font-family: var(--font-mono);
+      padding: 3px 6px;
+      border-radius: 999px;
+      border: 1px solid var(--hairline);
+      background: rgba(21, 25, 32, 0.56);
+    }
+    .lang-switch button {
+      appearance: none;
+      border: 0;
+      background: transparent;
+      color: var(--ink-muted);
+      padding: 4px 8px;
+      cursor: pointer;
+      border-radius: 999px;
+      transition: color 160ms var(--ease-out), background 160ms var(--ease-out), transform 140ms var(--ease-out);
+    }
+    .lang-switch button[aria-pressed="true"] {
+      color: var(--ink);
+      background: rgba(240, 243, 247, 0.1);
+    }
+    .lang-switch button:active { transform: scale(0.95); }
+    .lang-sep { display: none; }
+
+    .bag-trigger {
+      appearance: none;
+      border: 1px solid var(--hairline);
+      background: rgba(21, 25, 32, 0.78);
+      color: var(--ink);
+      font-size: 0.82rem;
+      font-weight: 500;
+      padding: 7px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: border-color 180ms var(--ease-out), background 180ms var(--ease-out), transform 140ms var(--ease-out);
+    }
+    .bag-trigger:active { transform: scale(0.97); }
+    @media (hover: hover) and (pointer: fine) {
+      .bag-trigger:hover { border-color: var(--hairline-strong); background: var(--surface-hover); }
+    }
+    .bag-num {
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      font-weight: 500;
+      min-width: 20px;
+      height: 20px;
+      padding: 0 6px;
+      border-radius: 999px;
+      background: var(--signal);
+      color: var(--signal-ink);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ================= BUTTON PRIMITIVES (SOFT PILLS, SIGNAL GOLD PRIMARY) ================= */
+    .btn {
+      appearance: none;
+      border: 1px solid transparent;
+      border-radius: 999px;
+      font-size: 0.86rem;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      padding: 12px 24px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background 180ms var(--ease-out), border-color 180ms var(--ease-out), color 180ms var(--ease-out), transform 140ms var(--ease-out);
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn-primary {
+      background: var(--signal);
+      color: var(--signal-ink);
+    }
+    @media (hover: hover) and (pointer: fine) {
+      .btn-primary:hover { background: var(--signal-bright); }
+    }
+    .btn-quiet {
+      background: transparent;
+      border-color: var(--hairline-strong);
+      color: var(--ink);
+    }
+    @media (hover: hover) and (pointer: fine) {
+      .btn-quiet:hover { background: rgba(240, 243, 247, 0.06); border-color: var(--ink-secondary); }
+    }
+
+    /* ================= 1. FULL-BLEED MONUMENTAL 3D SPIRAL HERO ================= */
+    .spiral-hero {
+      position: relative;
+      height: 280vh;
+    }
+    .spiral-stage {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      width: 100%;
+      overflow: hidden;
+      background: radial-gradient(ellipse 75% 65% at 50% 48%, #161B23 0%, #0D1015 58%, #090B0E 100%);
+    }
+
+    /* Giant quiet architectural wordmark sitting behind the 3D helix */
+    .spiral-backdrop-type {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      user-select: none;
+      z-index: 1;
+    }
+    .spiral-backdrop-type span {
+      font-family: var(--font-display);
+      font-weight: 500;
+      font-size: clamp(5rem, 16vw, 15.5rem);
+      line-height: 0.92;
+      letter-spacing: -0.055em;
+      color: rgba(243, 245, 248, 0.04);
+      white-space: nowrap;
+    }
+
+    #spiralCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      z-index: 2;
+      cursor: grab;
+      touch-action: pan-y;
+    }
+    #spiralCanvas.dragging { cursor: grabbing; }
+
+    /* Minimal editorial overlay anchored cleanly at the edges (never blocking the center spiral) */
+    .spiral-overlay {
+      position: absolute;
+      inset: 64px clamp(20px, 4vw, 48px) 28px;
+      z-index: 5;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .spiral-top-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding-top: 20px;
+      gap: 24px;
+    }
+    .hero-statement {
+      font-family: var(--font-display);
+      font-weight: 500;
+      font-size: clamp(2rem, 3.6vw, 3.25rem);
+      line-height: 1.04;
+      letter-spacing: -0.045em;
+      text-wrap: balance;
+      max-width: 16ch;
+      color: var(--ink);
+    }
+    .hero-sub {
+      font-size: 0.88rem;
+      color: var(--ink-secondary);
+      max-width: 30ch;
+      text-align: right;
+      line-height: 1.5;
+    }
+
+    .spiral-footer-bar {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: end;
+      gap: 20px;
+      padding-top: 16px;
+      border-top: 1px solid var(--hairline);
+      pointer-events: auto;
+    }
+    .spiral-active-readout {
+      display: flex;
+      align-items: baseline;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .spiral-count {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--signal-bright);
+    }
+    .spiral-piece-name {
+      font-size: 0.92rem;
+      font-weight: 500;
+      color: var(--ink);
+    }
+    .spiral-piece-price {
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      color: var(--ink-secondary);
+    }
+
+    .spiral-center-hint {
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      color: var(--ink-muted);
+      text-align: center;
+    }
+
+    .spiral-cta-row {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Static Hero Fallback (only for prefers-reduced-motion or devices without WebGL2) */
+    .hero-static {
+      display: none;
+      padding: 96px 20px 48px;
+      border-bottom: 1px solid var(--hairline);
+    }
+    .hero-static h1 {
+      font-family: var(--font-display);
+      font-weight: 500;
+      font-size: clamp(2.35rem, 9.5vw, 3.4rem);
+      line-height: 1.04;
+      letter-spacing: -0.045em;
+      text-wrap: balance;
+      margin-bottom: 16px;
+      max-width: 15ch;
+    }
+    .hero-static p {
+      color: var(--ink-secondary);
+      font-size: 0.95rem;
+      max-width: 38ch;
+      margin-bottom: 24px;
+    }
+    .static-carousel {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      margin: 28px -20px 0;
+      padding: 0 20px 8px;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+    }
+    .static-plate {
+      flex: 0 0 210px;
+      scroll-snap-align: start;
+      appearance: none;
+      border: 0;
+      border-top: 1px solid var(--hairline);
+      background: var(--bg-room);
+      padding: 16px 14px 14px;
+      text-align: left;
+      cursor: pointer;
+    }
+    .static-plate img {
+      width: 100%;
+      height: 190px;
+      object-fit: contain;
+      display: block;
+      margin-bottom: 12px;
+      filter: drop-shadow(0 18px 20px rgba(0, 0, 0, 0.7));
+    }
+    .static-plate-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      font-family: var(--font-mono);
+      color: var(--ink-secondary);
+    }
+    .static-plate-row strong { color: var(--ink); font-weight: 500; }
+
+    body.no-webgl .spiral-hero { display: none; }
+    body.no-webgl .hero-static { display: block; }
+    @media (prefers-reduced-motion: reduce) {
+      .spiral-hero { display: none; }
+      .hero-static { display: block; }
+    }
+
+    /* ================= 2. FULL-BLEED SPATIAL VIRTUAL SHOWROOM (ZERO BOXED CARDS) ================= */
+    .showroom-wrap {
+      position: relative;
+      width: 100%;
+      min-height: 100vh;
+      background:
+        radial-gradient(ellipse 72% 52% at 50% 24%, #1B212B 0%, #101319 56%, #0A0C10 100%);
+      border-top: 1px solid var(--hairline);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 84px clamp(20px, 4vw, 56px) 32px;
+    }
+
+    /* Architectural studio wall cross-grid (edge to edge) */
+    .room-wall-grid {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(240, 243, 247, 0.032) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(240, 243, 247, 0.032) 1px, transparent 1px);
+      background-size: 140px 140px;
+      background-position: center top;
+      mask-image: linear-gradient(180deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.6) 68%, transparent 100%);
+    }
+
+    /* Perspective studio floor plane spanning full 100vw */
+    .room-floor {
+      position: absolute;
+      left: -15vw;
+      right: -15vw;
+      bottom: -92px;
+      height: 260px;
+      pointer-events: none;
+      background-color: #080A0D;
+      background-image:
+        linear-gradient(rgba(240, 243, 247, 0.055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(240, 243, 247, 0.055) 1px, transparent 1px);
+      background-size: 96px 46px;
+      transform: perspective(700px) rotateX(75deg);
+      transform-origin: center top;
+      border-top: 1px solid rgba(240, 243, 247, 0.11);
+      box-shadow: inset 0 42px 84px rgba(0, 0, 0, 0.78);
+    }
+
+    /* Overhead architectural soft track light */
+    .room-spotlight {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: min(1100px, 90vw);
+      height: 460px;
+      transform: translateX(-50%);
+      pointer-events: none;
+      background: radial-gradient(ellipse 55% 70% at 50% 0%, rgba(240, 243, 247, 0.08) 0%, transparent 72%);
+    }
+
+    .room-header {
+      position: relative;
+      z-index: 6;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .room-title-group {
+      display: flex;
+      align-items: baseline;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .room-heading {
+      font-family: var(--font-display);
+      font-weight: 500;
+      font-size: clamp(2rem, 3.8vw, 3.25rem);
+      line-height: 1.02;
+      letter-spacing: -0.04em;
+    }
+    .room-count {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--ink-muted);
+    }
+
+    /* Room Switcher Tabs (Apparel Rail / Footwear Wall) */
+    .room-tabs {
+      display: inline-flex;
+      align-items: center;
+      border-bottom: 1px solid var(--hairline);
+      gap: 24px;
+    }
+    .room-tab {
+      appearance: none;
+      border: 0;
+      background: transparent;
+      padding: 10px 2px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--ink-muted);
+      cursor: pointer;
+      position: relative;
+      transition: color 180ms var(--ease-out);
+    }
+    .room-tab[aria-selected="true"] { color: var(--ink); }
+    .room-tab::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; bottom: -1px;
+      height: 2px;
+      background: var(--accent);
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform 240ms var(--ease-out);
+    }
+    .room-tab[aria-selected="true"]::after { transform: scaleX(1); }
+
+    /* Centered Progress Digital architectural wall watermark */
+    .room-watermark {
+      position: absolute;
+      top: 162px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      opacity: 0.28;
+      pointer-events: none;
+      user-select: none;
+    }
+    .room-watermark img { width: 32px; height: 32px; object-fit: contain; }
+    .room-watermark span {
+      font-size: 0.88rem;
+      font-weight: 500;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      color: var(--ink-secondary);
+    }
+
+    /* Room Viewport Switcher (Rail vs Footwear vs Inline Inspection Zoom) */
+    .room-stage {
+      position: relative;
+      z-index: 5;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 24px 0 18px;
+      min-height: 470px;
+    }
+
+    .room-view {
+      width: 100%;
+      transition: opacity 280ms var(--ease-out), transform 340ms var(--ease-out);
+    }
+    .room-view.hidden {
+      display: none;
+    }
+
+    /* Suspended Brushed-Steel Apparel Rail */
+    .rail-container {
+      width: 100%;
+      max-width: 1480px;
+      margin: 0 auto;
+      padding: 36px 0 24px;
+    }
+    .steel-rail {
+      position: relative;
+      height: 5px;
+      width: 100%;
+      background: linear-gradient(180deg, #A3B0C0 0%, #434E5D 55%, #1A2029 100%);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.78);
+    }
+    .steel-rail::before, .steel-rail::after {
+      content: "";
+      position: absolute;
+      top: -8px;
+      width: 4px;
+      height: 22px;
+      background: #4E5A6A;
+    }
+    .steel-rail::before { left: 0; }
+    .steel-rail::after { right: 0; }
+
+    .apparel-grid {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: clamp(8px, 1.4vw, 20px);
+      margin-top: -22px;
+      padding: 0 clamp(8px, 2vw, 28px);
+      align-items: start;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .apparel-grid:has(.piece-btn:hover) .piece-btn:not(:hover),
+      .footwear-rack:has(.piece-btn:hover) .piece-btn:not(:hover) {
+        opacity: 0.44;
+      }
+    }
+
+    .piece-btn {
+      position: relative;
+      appearance: none;
+      border: 1px solid transparent;
+      background: transparent;
+      padding: 6px 6px 14px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: opacity 220ms var(--ease-out), transform 240ms var(--ease-out), border-color 180ms var(--ease-out), background 180ms var(--ease-out);
+      transform-origin: top center;
+    }
+    .piece-btn:active { transform: scale(0.98); }
+    @media (hover: hover) and (pointer: fine) {
+      .piece-btn:hover {
+        border-color: rgba(24, 200, 240, 0.58);
+        background: rgba(24, 200, 240, 0.03);
+        transform: translateY(-4px);
+        z-index: 8;
+      }
+    }
+    .piece-btn:focus-visible {
+      border-color: var(--accent);
+      background: rgba(24, 200, 240, 0.04);
+      z-index: 8;
+    }
+
+    .piece-btn img {
+      width: 100%;
+      max-width: 240px;
+      aspect-ratio: 3 / 4;
+      object-fit: contain;
+      display: block;
+      filter: drop-shadow(0 28px 30px rgba(0, 0, 0, 0.8));
+      pointer-events: none;
+    }
+    .piece-btn.sneaker-piece img {
+      max-width: 290px;
+      aspect-ratio: 800 / 520;
+      filter: drop-shadow(0 22px 20px rgba(0, 0, 0, 0.86));
+    }
+
+    /* Architectural Reticle Tag (quiet, razor sharp) */
+    .piece-tag {
+      position: absolute;
+      top: -22px;
+      left: -1px;
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      font-weight: 500;
+      padding: 2px 7px;
+      background: var(--accent);
+      color: var(--bg);
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 180ms var(--ease-out), transform 180ms var(--ease-out);
+      pointer-events: none;
+    }
+    .piece-ticks::before, .piece-ticks::after {
+      content: "";
+      position: absolute;
+      width: 5px; height: 5px;
+      background: var(--accent);
+      opacity: 0;
+      transition: opacity 180ms var(--ease-out);
+      pointer-events: none;
+    }
+    .piece-ticks::before { bottom: -3px; left: -3px; }
+    .piece-ticks::after { bottom: -3px; right: -3px; }
+
+    @media (hover: hover) and (pointer: fine) {
+      .piece-btn:hover .piece-tag { opacity: 1; transform: translateY(0); }
+      .piece-btn:hover .piece-ticks::before, .piece-btn:hover .piece-ticks::after { opacity: 1; }
+    }
+    .piece-btn:focus-visible .piece-tag { opacity: 1; transform: translateY(0); }
+    .piece-btn:focus-visible .piece-ticks::before, .piece-btn:focus-visible .piece-ticks::after { opacity: 1; }
+
+    /* Two-Tier Architectural Sneaker Wall */
+    .footwear-rack {
+      width: 100%;
+      max-width: 1060px;
+      margin: 0 auto;
+      padding: 18px clamp(16px, 3vw, 40px);
+      border-left: 1px solid var(--hairline-strong);
+      border-right: 1px solid var(--hairline-strong);
+    }
+    .shelf-row {
+      display: grid;
+      gap: clamp(16px, 2.4vw, 36px);
+      align-items: end;
+      padding: 8px 8px 12px;
+    }
+    .shelf-row.row-top {
+      grid-template-columns: repeat(2, minmax(0, 320px));
+      justify-content: center;
+      margin-bottom: 28px;
+    }
+    .shelf-row.row-bottom {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .shelf-ledge {
+      grid-column: 1 / -1;
+      height: 4px;
+      margin-top: -10px;
+      background: linear-gradient(180deg, #98A6B8 0%, #394352 60%, #161B22 100%);
+      box-shadow: 0 12px 26px rgba(0, 0, 0, 0.85);
+    }
+
+    /* ================= IN-ROOM CAMERA ZOOM INSPECTION VIEW (NOT A GENERIC MODAL!) ================= */
+    .inspect-view {
+      width: 100%;
+      max-width: 1260px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: clamp(28px, 5vw, 72px);
+      align-items: center;
+      animation: inspectIn 280ms var(--ease-out);
+    }
+    @keyframes inspectIn {
+      from { opacity: 0; transform: scale(0.96); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .inspect-stage {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 440px;
+      padding: 12px 52px;
+    }
+    .inspect-stage img {
+      max-width: 100%;
+      max-height: 460px;
+      object-fit: contain;
+      filter: drop-shadow(0 36px 46px rgba(0, 0, 0, 0.86));
+      transition: transform 200ms var(--ease-out);
+      will-change: transform;
+    }
+    .inspect-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      appearance: none;
+      width: 42px; height: 42px;
+      border-radius: 999px;
+      border: 1px solid var(--hairline);
+      background: rgba(16, 19, 24, 0.78);
+      color: var(--ink-secondary);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 160ms var(--ease-out), border-color 160ms var(--ease-out), transform 140ms var(--ease-out);
+    }
+    .inspect-arrow:active { transform: translateY(-50%) scale(0.95); }
+    @media (hover: hover) and (pointer: fine) {
+      .inspect-arrow:hover { color: var(--ink); border-color: var(--hairline-strong); }
+    }
+    .inspect-arrow.prev { left: 0; }
+    .inspect-arrow.next { right: 0; }
+
+    /* Frameless architectural spec rail (hairlines only, zero card box!) */
+    .inspect-specs {
+      padding: 8px 0;
+    }
+    .inspect-back-btn {
+      appearance: none;
+      border: 0;
+      background: transparent;
+      color: var(--ink-secondary);
+      font-size: 0.82rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      margin-bottom: 24px;
+      padding: 4px 0;
+      transition: color 160ms var(--ease-out);
+    }
+    @media (hover: hover) and (pointer: fine) {
+      .inspect-back-btn:hover { color: var(--ink); }
+    }
+    .inspect-code-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--ink-muted);
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--hairline);
+      margin-bottom: 16px;
+    }
+    .inspect-code-row strong { color: var(--signal); font-weight: 500; }
+    .inspect-title {
+      font-family: var(--font-display);
+      font-weight: 500;
+      font-size: clamp(1.9rem, 2.9vw, 2.65rem);
+      line-height: 1.06;
+      letter-spacing: -0.04em;
+      text-wrap: balance;
+      margin-bottom: 12px;
+    }
+    .inspect-desc {
+      color: var(--ink-secondary);
+      font-size: 0.92rem;
+      max-width: 44ch;
+      margin-bottom: 24px;
+    }
+    .spec-row-label {
+      font-size: 0.78rem;
+      color: var(--ink-muted);
+      margin-bottom: 10px;
+    }
+    .size-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+    .size-opt {
+      appearance: none;
+      min-width: 50px;
+      height: 40px;
+      padding: 0 14px;
+      border-radius: 999px;
+      border: 1px solid var(--hairline);
+      background: transparent;
+      color: var(--ink-secondary);
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      cursor: pointer;
+      transition: border-color 160ms var(--ease-out), color 160ms var(--ease-out), background 160ms var(--ease-out), transform 140ms var(--ease-out);
+    }
+    .size-opt:active { transform: scale(0.96); }
+    .size-opt.active {
+      background: var(--ink);
+      color: var(--bg);
+      border-color: var(--ink);
+      font-weight: 500;
+    }
+    .inspect-buy-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      padding-top: 20px;
+      border-top: 1px solid var(--hairline);
+    }
+    .qty-box {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--hairline);
+      border-radius: 999px;
+      height: 46px;
+      padding: 0 6px;
+    }
+    .qty-box button {
+      appearance: none;
+      border: 0;
+      background: transparent;
+      width: 36px;
+      height: 100%;
+      color: var(--ink-secondary);
+      font-family: var(--font-mono);
+      cursor: pointer;
+      transition: color 140ms var(--ease-out);
+    }
+    .qty-box button:hover { color: var(--ink); }
+    .qty-box span {
+      font-family: var(--font-mono);
+      font-size: 0.84rem;
+      min-width: 24px;
+      text-align: center;
+    }
+
+    /* Bottom Architectural Hairline Status Bar inside Showroom */
+    .room-footer {
+      position: relative;
+      z-index: 6;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--hairline);
+      font-size: 0.84rem;
+      color: var(--ink-secondary);
+      flex-wrap: wrap;
+    }
+    .room-readout {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 14px;
+    }
+    .room-readout strong { color: var(--ink); font-weight: 500; }
+    .room-readout .r-price { font-family: var(--font-mono); font-size: 0.82rem; color: var(--signal-bright); }
+    .room-hint { font-family: var(--font-mono); font-size: 0.76rem; color: var(--ink-muted); }
+
+    /* ================= 3. OPEN EDITORIAL ARCHITECTURE & INTERACTIVE LAYER SCRUBBER ================= */
+    .craft-band {
+      position: relative;
+      border-top: 1px solid var(--hairline);
+      padding: clamp(72px, 9vw, 128px) clamp(20px, 4vw, 56px);
+      background: var(--bg);
+    }
+    .craft-inner {
+      max-width: 1360px;
+      margin: 0 auto;
+    }
+    .craft-top {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: clamp(32px, 6vw, 88px);
+      align-items: end;
+      margin-bottom: clamp(44px, 6vw, 72px);
+    }
+    .editorial-h2 {
+      font-family: var(--font-display);
+      font-weight: 500;
+      font-size: clamp(2.15rem, 4.1vw, 3.7rem);
+      line-height: 1.03;
+      letter-spacing: -0.045em;
+      text-wrap: balance;
+      max-width: 16ch;
+    }
+    .editorial-p {
+      color: var(--ink-secondary);
+      font-size: 0.98rem;
+      line-height: 1.65;
+      max-width: 48ch;
+    }
+
+    /* Interactive Before/After Wireframe Scrubber (Signature Portfolio Moment — ZERO Boxy Cards) */
+    .scrubber-stage {
+      position: relative;
+      width: 100%;
+      height: clamp(340px, 48vh, 480px);
+      border-top: 1px solid var(--hairline);
+      border-bottom: 1px solid var(--hairline);
+      overflow: hidden;
+      background: #0D1016;
+      user-select: none;
+      touch-action: pan-y;
+      cursor: ew-resize;
+    }
+    .scrub-side {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .scrub-studio {
+      background: radial-gradient(ellipse 65% 70% at 50% 42%, #1D2430 0%, #0E1117 72%);
+    }
+    .scrub-studio img {
+      height: 84%;
+      max-width: 80%;
+      object-fit: contain;
+      filter: drop-shadow(0 32px 36px rgba(0, 0, 0, 0.82));
+      pointer-events: none;
+    }
+    .scrub-wire {
+      background-color: #090C11;
+      background-image:
+        linear-gradient(rgba(24, 200, 240, 0.12) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(24, 200, 240, 0.12) 1px, transparent 1px);
+      background-size: 40px 40px;
+      clip-path: inset(0 calc(100% - var(--split, 50%)) 0 0);
+    }
+    .scrub-wire-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .scrub-wire img {
+      height: 84%;
+      max-width: 80%;
+      object-fit: contain;
+      filter: grayscale(1) contrast(1.4) brightness(0.65) drop-shadow(0 0 1px #18C8F0);
+      opacity: 0.78;
+      pointer-events: none;
+    }
+    .scrub-wire-cross {
+      position: absolute;
+      inset: 14% 22%;
+      border: 1px dashed rgba(24, 200, 240, 0.52);
+      pointer-events: none;
+    }
+    .scrub-wire-note {
+      position: absolute;
+      top: 20px;
+      left: 24px;
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      color: var(--accent);
+    }
+    .scrub-studio-note {
+      position: absolute;
+      top: 20px;
+      right: 24px;
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      color: var(--ink-secondary);
+    }
+    .scrub-handle {
+      position: absolute;
+      top: 0; bottom: 0;
+      left: var(--split, 50%);
+      width: 1px;
+      background: var(--accent);
+      pointer-events: none;
+      z-index: 4;
+    }
+    .scrub-knob {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: var(--bg);
+      border: 1px solid var(--accent);
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+    }
+    .scrub-range-a11y {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: ew-resize;
+      z-index: 5;
+    }
+
+    /* Architectural Typographic Ledger (Hairline rows, NOT equal boxes) */
+    .ledger {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr 1fr;
+      margin-top: 40px;
+      border-bottom: 1px solid var(--hairline);
+    }
+    .ledger-col {
+      padding: 28px 28px 32px 0;
+    }
+    .ledger-col + .ledger-col {
+      padding-left: 32px;
+      border-left: 1px solid var(--hairline);
+    }
+    .ledger-val {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 3.1vw, 2.85rem);
+      font-weight: 500;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      color: var(--ink);
+      margin-bottom: 10px;
+    }
+    .ledger-label {
+      font-size: 0.88rem;
+      color: var(--ink-secondary);
+      max-width: 28ch;
+    }
+
+    /* ================= 4. PROGRESS DIGITAL STUDIO & OPEN INQUIRY (ZERO BOXED FORM) ================= */
+    .studio-band {
+      padding: clamp(72px, 9vw, 128px) clamp(20px, 4vw, 56px) 96px;
+      background: var(--bg);
+    }
+    .studio-inner {
+      max-width: 1360px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: clamp(40px, 7vw, 104px);
+      align-items: start;
+    }
+
+    .studio-brand-row {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .studio-brand-row img { width: 32px; height: 32px; object-fit: contain; }
+    .studio-brand-row span { font-size: 0.92rem; font-weight: 500; color: var(--ink); }
+
+    /* Hairline FAQ List */
+    .faq-wrap {
+      margin-top: 40px;
+      border-top: 1px solid var(--hairline);
+    }
+    .faq-row {
+      border-bottom: 1px solid var(--hairline);
+    }
+    .faq-row summary {
+      list-style: none;
+      padding: 18px 0;
+      font-size: 0.96rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+    .faq-row summary::-webkit-details-marker { display: none; }
+    .faq-row summary::after {
+      content: "+";
+      font-family: var(--font-mono);
+      font-size: 1rem;
+      color: var(--ink-muted);
+      transition: transform 200ms var(--ease-out), color 200ms var(--ease-out);
+    }
+    .faq-row[open] summary::after { transform: rotate(45deg); color: var(--signal); }
+    .faq-row p {
+      padding-bottom: 20px;
+      color: var(--ink-secondary);
+      font-size: 0.92rem;
+      max-width: 54ch;
+    }
+
+    /* Open Underline Architectural Form (directly on canvas, zero outer box) */
+    .inquiry-col h3 {
+      font-family: var(--font-display);
+      font-weight: 500;
+      font-size: clamp(1.75rem, 2.5vw, 2.25rem);
+      letter-spacing: -0.04em;
+      line-height: 1.08;
+      margin-bottom: 10px;
+    }
+    .inquiry-col .sub {
+      color: var(--ink-secondary);
+      font-size: 0.92rem;
+      margin-bottom: 32px;
+      max-width: 42ch;
+    }
+    .line-field {
+      margin-bottom: 22px;
+    }
+    .line-field label {
+      display: block;
+      font-size: 0.78rem;
+      color: var(--ink-muted);
+      margin-bottom: 6px;
+    }
+    .line-field input, .line-field select, .line-field textarea {
+      width: 100%;
+      background: transparent;
+      border: 0;
+      border-bottom: 1px solid var(--hairline-strong);
+      padding: 10px 0;
+      color: var(--ink);
+      font-family: var(--font-sans);
+      font-size: 0.95rem;
+      border-radius: 0;
+      transition: border-color 180ms var(--ease-out);
+    }
+    .line-field select option { background: var(--bg-room); color: var(--ink); }
+    .line-field input:focus, .line-field select:focus, .line-field textarea:focus {
+      outline: none;
+      border-bottom-color: var(--signal);
+    }
+    .line-field textarea { min-height: 76px; resize: vertical; }
+    .form-meta {
+      margin-top: 14px;
+      font-size: 0.78rem;
+      color: var(--ink-muted);
+    }
+    .form-ok {
+      display: none;
+      margin-top: 18px;
+      padding-left: 14px;
+      border-left: 2px solid var(--signal);
+      font-size: 0.9rem;
+      color: var(--ink);
+    }
+    .form-ok.show { display: block; }
+
+    /* ================= SLIDE-OUT BAG DRAWER ================= */
+    .drawer-scrim {
+      position: fixed;
+      inset: 0;
+      z-index: 240;
+      background: rgba(5, 7, 10, 0.7);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 260ms var(--ease-out);
+    }
+    .drawer-scrim.open { opacity: 1; pointer-events: auto; }
+    .drawer {
+      position: fixed;
+      top: 0; right: 0; bottom: 0;
+      width: min(410px, 100vw);
+      z-index: 250;
+      background: #0F1218;
+      border-left: 1px solid var(--hairline);
+      display: flex;
+      flex-direction: column;
+      transform: translateX(100%);
+      transition: transform 360ms var(--ease-drawer);
+    }
+    .drawer.open { transform: translateX(0); }
+    .drawer-head {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--hairline);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .drawer-head h3 { font-size: 0.92rem; font-weight: 500; }
+    .drawer-close {
+      appearance: none; border: 0; background: transparent;
+      color: var(--ink-secondary); width: 32px; height: 32px; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+    .drawer-close:hover { color: var(--ink); }
+    .drawer-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .drawer-empty { margin: auto; text-align: center; color: var(--ink-muted); font-size: 0.9rem; max-width: 28ch; }
+    .bag-row {
+      display: grid;
+      grid-template-columns: 64px 1fr auto;
+      gap: 14px;
+      align-items: center;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--hairline);
+    }
+    .bag-row img { width: 64px; height: 64px; object-fit: contain; background: #141820; border-radius: 12px; padding: 4px; }
+    .bag-row-title { font-size: 0.88rem; font-weight: 500; }
+    .bag-row-meta { font-family: var(--font-mono); font-size: 0.74rem; color: var(--ink-muted); margin-top: 3px; }
+    .bag-del { appearance: none; border: 0; background: transparent; color: var(--ink-muted); font-size: 0.78rem; cursor: pointer; }
+    .bag-del:hover { color: var(--ink); }
+    .drawer-foot {
+      padding: 20px 24px 28px;
+      border-top: 1px solid var(--hairline);
+    }
+    .drawer-total {
+      display: flex; justify-content: space-between; align-items: baseline;
+      margin-bottom: 16px;
+    }
+    .drawer-total span { font-size: 0.84rem; color: var(--ink-secondary); }
+    .drawer-total strong { font-family: var(--font-mono); font-size: 1.08rem; font-weight: 500; }
+    .drawer-note { display: none; margin-top: 12px; font-size: 0.8rem; color: var(--accent); }
+    .drawer-note.show { display: block; }
+
+    /* ================= FOOTER ================= */
+    footer {
+      border-top: 1px solid var(--hairline);
+      padding: 28px clamp(20px, 4vw, 56px) 36px;
+      background: var(--bg);
+    }
+    .foot-bar {
+      max-width: 1360px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      font-size: 0.82rem;
+      color: var(--ink-muted);
+    }
+    .foot-left { display: inline-flex; align-items: center; gap: 10px; }
+    .foot-left img { width: 22px; height: 22px; object-fit: contain; }
+    .foot-left strong { color: var(--ink); font-weight: 500; }
+    .foot-right { display: flex; gap: 20px; }
+    .foot-right a { text-decoration: none; color: var(--ink-secondary); }
+    .foot-right a:hover { color: var(--ink); }
+
+    /* ================= RESPONSIVE ================= */
+    @media (max-width: 1040px) {
+      .nav-links, .brand-by { display: none; }
+      .apparel-grid {
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        padding-bottom: 14px;
+      }
+      .apparel-grid .piece-btn { flex: 0 0 190px; scroll-snap-align: center; }
+      .inspect-view, .craft-top, .studio-inner { grid-template-columns: 1fr; }
+      .ledger { grid-template-columns: 1fr; }
+      .ledger-col + .ledger-col { padding-left: 0; border-left: 0; border-top: 1px solid var(--hairline); }
+    }
+    @media (max-width: 720px) {
+      .spiral-hero { height: 220vh; }
+      .spiral-overlay { inset: 64px 16px 18px; }
+      .spiral-top-meta { flex-direction: column; padding-top: 10px; gap: 6px; }
+      .hero-statement { font-size: clamp(2rem, 9.2vw, 2.55rem); max-width: 15ch; }
+      .hero-sub { text-align: left; font-size: 0.82rem; max-width: 34ch; }
+      .spiral-footer-bar { grid-template-columns: 1fr; gap: 12px; padding-top: 12px; }
+      .spiral-center-hint { display: none; }
+      .spiral-cta-row { justify-content: stretch; }
+      .spiral-cta-row .btn { flex: 1; padding: 10px 12px; font-size: 0.8rem; }
+      .showroom-wrap { padding: 76px 18px 28px; min-height: auto; }
+      .room-watermark { display: none; }
+      .footwear-rack { padding: 12px 0; border-left: 0; border-right: 0; }
+      .shelf-row.row-top, .shelf-row.row-bottom {
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        justify-content: flex-start;
+        gap: 14px;
+        padding: 10px 4px 12px;
+        margin-bottom: 22px;
+        border-bottom: 3px solid #434E5D;
+        box-shadow: 0 12px 20px -10px rgba(0, 0, 0, 0.85);
+      }
+      .shelf-row .piece-btn { flex: 0 0 210px; scroll-snap-align: center; }
+      .shelf-ledge { display: none; }
+      .inspect-stage { min-height: 260px; padding: 8px 36px; }
+      .inspect-stage img { max-height: 270px; }
+      .scrub-wire-note, .scrub-studio-note { top: 12px; font-size: 0.64rem; }
+      .scrub-wire-note { left: 12px; }
+      .scrub-studio-note { right: 12px; }
+    }
+    @media (pointer: coarse) {
+      .btn, .bag-trigger, .room-tab, .size-opt { min-height: 44px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main" data-i18n="skip">Skip to content</a>
+
+  <header class="topbar" id="topbar">
+    <a class="brand" href="#lookbook">
+      <img src="assets/logo.webp" alt="Progress Digital" width="28" height="28">
+      <span class="brand-name">PD Archive <span class="drop-dot" aria-hidden="true"></span></span>
+      <span class="brand-by" data-i18n="byPd">Progress Digital</span>
+    </a>
+
+    <nav class="nav-links" aria-label="Primary navigation">
+      <a href="#lookbook" data-nav="lookbook" class="active" data-i18n="navLookbook">Lookbook</a>
+      <a href="#showroom" data-nav="showroom" data-i18n="navShowroom">Showroom</a>
+      <a href="#architecture" data-nav="architecture" data-i18n="navArch">Architecture</a>
+      <a href="#studio" data-nav="studio" data-i18n="navStudio">Studio</a>
+    </nav>
+
+    <div class="top-right">
+      <div class="lang-switch" role="group" aria-label="Language">
+        <button type="button" id="btnEn" aria-pressed="true">EN</button>
+        <span class="lang-sep" aria-hidden="true">/</span>
+        <button type="button" id="btnEs" aria-pressed="false">ES</button>
+      </div>
+      <button class="bag-trigger" id="openBagBtn" type="button">
+        <span data-i18n="bag">Bag</span>
+        <span class="bag-num num" id="bagCount">0</span>
+      </button>
+    </div>
+  </header>
+
+  <main id="main" tabindex="-1">
+
+    <!-- ================= 1. FULL-BLEED 3D SPIRAL LOOKBOOK ================= -->
+    <section class="spiral-hero" id="lookbook" aria-label="3D Spiral Lookbook">
+      <div class="spiral-stage">
+        <div class="spiral-backdrop-type" aria-hidden="true"><span>PD Archive</span></div>
+        <canvas id="spiralCanvas" aria-hidden="true"></canvas>
+
+        <div class="spiral-overlay">
+          <div class="spiral-top-meta">
+            <h1 class="hero-statement" data-i18n="heroTitle">Spatial streetwear, built without heavy 3D</h1>
+            <p class="hero-sub" data-i18n="heroSub">Curved WebGL2 lookbook and studio-lit virtual showroom crafted by Progress Digital.</p>
+          </div>
+
+          <div class="spiral-footer-bar">
+            <div class="spiral-active-readout">
+              <span class="spiral-count num" id="spiralIdx">01 / 08</span>
+              <span class="spiral-piece-name" id="spiralName">Vector Shell Jacket</span>
+              <span class="spiral-piece-price num" id="spiralPrice">$290</span>
+            </div>
+            <div class="spiral-center-hint" data-i18n="dragHint">Scroll or drag the helix · Click front plate to inspect</div>
+            <div class="spiral-cta-row">
+              <button class="btn btn-quiet" id="spiralInspectBtn" type="button" data-i18n="inspectPiece">Inspect piece</button>
+              <a class="btn btn-primary" href="#showroom" data-i18n="enterRoom">Enter showroom</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Static / Mobile Hero Fallback -->
+    <section class="hero-static" id="lookbook-static" aria-label="Collection Overview">
+      <h1 data-i18n="heroTitle">Spatial streetwear, built without heavy 3D</h1>
+      <p data-i18n="heroSub">Curved WebGL2 lookbook and studio-lit virtual showroom crafted by Progress Digital.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <a class="btn btn-primary" href="#showroom" data-i18n="enterRoom">Enter showroom</a>
+        <a class="btn btn-quiet" href="#studio" data-i18n="startProject">Start a project</a>
+      </div>
+      <div class="static-carousel" id="staticCarousel"></div>
+    </section>
+
+    <!-- ================= 2. FULL-BLEED SPATIAL VIRTUAL SHOWROOM ================= -->
+    <section class="showroom-wrap" id="showroom" aria-labelledby="showroomHeading">
+      <div class="room-wall-grid" aria-hidden="true"></div>
+      <div class="room-spotlight" aria-hidden="true"></div>
+      <div class="room-floor" aria-hidden="true"></div>
+
+      <div class="room-watermark" aria-hidden="true">
+        <img src="assets/logo.webp" alt="" width="32" height="32">
+        <span>Progress Digital</span>
+      </div>
+
+      <div class="room-header">
+        <div class="room-title-group">
+          <h2 class="room-heading" id="showroomHeading" data-i18n="roomHeadingApparel">Apparel rail</h2>
+          <span class="room-count num" id="roomCount">6 pieces</span>
+        </div>
+
+        <div class="room-tabs" role="tablist" aria-label="Showroom rooms">
+          <button class="room-tab" id="tabApparel" type="button" role="tab" aria-selected="true" data-i18n="tabApparel">Apparel</button>
+          <button class="room-tab" id="tabFootwear" type="button" role="tab" aria-selected="false" data-i18n="tabFootwear">Footwear</button>
+        </div>
+      </div>
+
+      <div class="room-stage">
+        <!-- Apparel Rail View -->
+        <div class="room-view" id="viewApparel">
+          <div class="rail-container">
+            <div class="steel-rail" aria-hidden="true"></div>
+            <div class="apparel-grid" id="apparelGrid" role="list"></div>
+          </div>
+        </div>
+
+        <!-- Footwear Wall View -->
+        <div class="room-view hidden" id="viewFootwear">
+          <div class="footwear-rack">
+            <div class="shelf-row row-top" id="shelfTop" role="list"></div>
+            <div class="shelf-row row-bottom" id="shelfBottom" role="list"></div>
+          </div>
+        </div>
+
+        <!-- In-Room Camera Zoom Inspection View -->
+        <div class="room-view hidden" id="viewInspect" aria-live="polite">
+          <div class="inspect-view">
+            <div class="inspect-stage" id="inspectStage">
+              <button class="inspect-arrow prev" id="prevPiece" type="button" aria-label="Previous piece">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 18l-6-6 6-6"/></svg>
+              </button>
+              <img id="inspectImg" src="" alt="">
+              <button class="inspect-arrow next" id="nextPiece" type="button" aria-label="Next piece">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 18l6-6-6-6"/></svg>
+              </button>
+            </div>
+
+            <div class="inspect-specs">
+              <button class="inspect-back-btn" id="backToRoom" type="button">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                <span data-i18n="backRail">Back to showroom</span>
+              </button>
+
+              <div class="inspect-code-row">
+                <strong id="inspectCode">PD-01</strong>
+                <span id="inspectPrice" class="num">$290</span>
+              </div>
+              <h3 class="inspect-title" id="inspectTitle">Vector Shell Jacket</h3>
+              <p class="inspect-desc" id="inspectDesc"></p>
+
+              <div class="spec-row-label" data-i18n="selectSize">Select size</div>
+              <div class="size-list" id="sizeList"></div>
+
+              <div class="inspect-buy-row">
+                <div class="qty-box">
+                  <button type="button" id="qtyDec" aria-label="Decrease quantity">-</button>
+                  <span id="qtyNum" class="num">1</span>
+                  <button type="button" id="qtyInc" aria-label="Increase quantity">+</button>
+                </div>
+                <button class="btn btn-primary" id="addBagBtn" type="button" style="flex:1;" data-i18n="addToBag">Add to bag</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="room-footer">
+        <div class="room-readout" id="roomReadout">
+          <strong data-i18n="hoverPrompt">Select any piece to zoom in</strong>
+          <span class="r-price num">$165 - $290</span>
+        </div>
+        <span class="room-hint" data-i18n="swapNote">Modular catalog ready for custom product photography</span>
+      </div>
+    </section>
+
+    <!-- ================= 3. OPEN EDITORIAL ARCHITECTURE & INTERACTIVE SCRUBBER ================= -->
+    <section class="craft-band" id="architecture" aria-labelledby="archHeading">
+      <div class="craft-inner">
+        <div class="craft-top">
+          <h2 class="editorial-h2" id="archHeading" data-i18n="archTitle">Photographic depth without 3D bloat</h2>
+          <p class="editorial-p" data-i18n="archCopy">Heavy 3D garment meshes take megabytes to download and flatten fabric texture. Progress Digital pairs transparent studio cutouts with perspective staging and a zero-dependency WebGL2 spiral.</p>
+        </div>
+
+        <div class="scrubber-stage" id="scrubberStage" style="--split: 46%;">
+          <div class="scrub-side scrub-studio">
+            <span class="scrub-studio-note" data-i18n="scrubStudio">Final studio render</span>
+            <img src="assets/garments/vector-shell.webp" alt="Studio cutout garment">
+          </div>
+          <div class="scrub-side scrub-wire" aria-hidden="true">
+            <div class="scrub-wire-inner">
+              <span class="scrub-wire-note" data-i18n="scrubWire">2.5D spatial mask + perspective grid</span>
+              <div class="scrub-wire-cross"></div>
+              <img src="assets/garments/vector-shell.webp" alt="">
+            </div>
+          </div>
+          <div class="scrub-handle" aria-hidden="true"><div class="scrub-knob">&harr;</div></div>
+          <input class="scrub-range-a11y" id="scrubRange" type="range" min="8" max="92" value="46" aria-label="Compare wireframe structure with studio cutout">
+        </div>
+
+        <div class="ledger">
+          <div class="ledger-col">
+            <div class="ledger-val num">0.9 MB</div>
+            <p class="ledger-label" data-i18n="stat1">Complete site footprint including all 11 transparent WebP studio garments and WebGL2 code</p>
+          </div>
+          <div class="ledger-col">
+            <div class="ledger-val num">60 fps</div>
+            <p class="ledger-label" data-i18n="stat2">Native curved-cylinder spiral shader with zero external JavaScript frameworks</p>
+          </div>
+          <div class="ledger-col">
+            <div class="ledger-val">API</div>
+            <p class="ledger-label" data-i18n="stat3">Ready to connect directly to Shopify Storefront, Stripe Checkout, or custom inventory</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 4. PROGRESS DIGITAL PORTFOLIO & OPEN INQUIRY ================= -->
+    <section class="studio-band" id="studio" aria-labelledby="studioHeading">
+      <div class="studio-inner">
+        <div>
+          <div class="studio-brand-row">
+            <img src="assets/logo.webp" alt="Progress Digital" width="32" height="32">
+            <span>Progress Digital</span>
+          </div>
+          <h2 class="editorial-h2" id="studioHeading" data-i18n="studioTitle">Interactive flagships built to convert</h2>
+          <p class="editorial-p" style="margin-top:16px;" data-i18n="studioCopy">PD Archive is a portfolio concept built by Progress Digital. We design and engineer custom web showrooms, launches, and storefronts that feel tactile and stay fast on real phones.</p>
+
+          <div class="faq-wrap">
+            <details class="faq-row" open>
+              <summary data-i18n="faq1Q">Can we swap in our own clothing or sneakers?</summary>
+              <p data-i18n="faq1A">Yes. The entire showroom runs on a clean image manifest. Drop in your own studio cutouts or product shoots and every room, zoom view, and spiral card updates automatically.</p>
+            </details>
+            <details class="faq-row">
+              <summary data-i18n="faq2Q">Does it connect to real payments and inventory?</summary>
+              <p data-i18n="faq2A">Yes. We wire the bag and size inventory to Shopify, WooCommerce, Stripe Checkout, or direct WhatsApp ordering depending on how you sell.</p>
+            </details>
+            <details class="faq-row">
+              <summary data-i18n="faq3Q">How fast does it load on mobile connections?</summary>
+              <p data-i18n="faq3A">Under a second. Phones skip the heavy WebGL spiral loop and load a dedicated touch carousel while keeping the full showroom experience fast.</p>
+            </details>
+          </div>
+        </div>
+
+        <div class="inquiry-col">
+          <h3 data-i18n="formTitle">Start a project</h3>
+          <p class="sub" data-i18n="formSub">Share what you are launching and we will respond with scope, timeline, and visual direction.</p>
+
+          <form id="studioForm" novalidate>
+            <div class="line-field">
+              <label for="inName" data-i18n="fName">Name</label>
+              <input id="inName" name="name" type="text" required placeholder="Alex Rivera" data-i18n-ph="fNamePh">
+            </div>
+            <div class="line-field">
+              <label for="inContact" data-i18n="fContact">Email or WhatsApp</label>
+              <input id="inContact" name="contact" type="text" required placeholder="alex@brand.com" data-i18n-ph="fContactPh">
+            </div>
+            <div class="line-field">
+              <label for="inScope" data-i18n="fScope">Project focus</label>
+              <select id="inScope" name="scope">
+                <option value="showroom" data-i18n="optShowroom">Spatial store or product showroom</option>
+                <option value="launch" data-i18n="optLaunch">Interactive drop or campaign page</option>
+                <option value="flagship" data-i18n="optFlagship">Custom brand website</option>
+              </select>
+            </div>
+            <div class="line-field">
+              <label for="inBrief" data-i18n="fBrief">Project notes</label>
+              <textarea id="inBrief" name="brief" placeholder="Timeline, catalog size, or references" data-i18n-ph="fBriefPh"></textarea>
+            </div>
+            <button class="btn btn-primary" type="submit" style="width:100%;" data-i18n="fSubmit">Send inquiry</button>
+            <p class="form-meta" data-i18n="formMeta">Demo mode: validates locally. Wired to email, webhook, or WhatsApp on launch.</p>
+            <div class="form-ok" id="formOk" role="status" aria-live="polite" data-i18n="formOk">Inquiry recorded in demo mode. Ready to route directly to Progress Digital in production.</div>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ================= SLIDE-OUT BAG DRAWER ================= -->
+  <div class="drawer-scrim" id="drawerScrim" aria-hidden="true"></div>
+  <aside class="drawer" id="bagDrawer" role="dialog" aria-modal="true" aria-label="Shopping bag" aria-hidden="true">
+    <div class="drawer-head">
+      <h3 data-i18n="bagTitle">Bag</h3>
+      <button class="drawer-close" id="closeBagBtn" type="button" aria-label="Close bag">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="drawer-body" id="bagBody"></div>
+    <div class="drawer-foot">
+      <div class="drawer-total">
+        <span data-i18n="subtotal">Subtotal</span>
+        <strong id="bagSub" class="num">$0</strong>
+      </div>
+      <button class="btn btn-primary" id="checkoutBtn" type="button" style="width:100%;" data-i18n="checkout">Simulate checkout</button>
+      <p class="drawer-note" id="drawerNote" data-i18n="checkoutOk">Demo checkout confirmed. Connect Shopify or Stripe for live orders.</p>
+    </div>
+  </aside>
+
+  <footer>
+    <div class="foot-bar">
+      <div class="foot-left">
+        <img src="assets/logo.webp" alt="Progress Digital" width="22" height="22">
+        <strong>Progress Digital</strong>
+        <span>&middot;</span>
+        <span data-i18n="footNote">PD Archive is a fictional concept showcase built as a personal portfolio piece.</span>
+      </div>
+      <div class="foot-right">
+        <a href="#lookbook" data-i18n="topLink">Back to top</a>
+        <a href="#studio" data-i18n="contactLink">Start a project</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    /* =========================================================================
+       CATALOG MANIFEST (Swap image paths & names here to load any new garments)
+       ========================================================================= */
+    const CATALOG = [
+      {
+        id: 'pd-01', code: 'PD-01', room: 'apparel', name: 'Vector Shell Jacket', price: 290,
+        descEn: 'Three-layer waterproof ripstop shell with asymmetrical zip closure and articulated storm hood.',
+        descEs: 'Chaqueta impermeable de ripstop 3L con cremallera asimétrica y capucha articulada.',
+        img: 'assets/garments/vector-shell.webp', sizes: ['XS', 'S', 'M', 'L', 'XL']
+      },
+      {
+        id: 'pd-02', code: 'PD-02', room: 'apparel', name: 'Liquid Cropped Puffer', price: 260,
+        descEn: 'Reflective metallic ripstop down jacket cut in a cropped architectural silhouette.',
+        descEs: 'Plumífero metálico reflectante en silueta corta arquitectónica con cuello alto.',
+        img: 'assets/garments/liquid-puffer.webp', sizes: ['XS', 'S', 'M', 'L', 'XL']
+      },
+      {
+        id: 'pd-03', code: 'PD-03', room: 'apparel', name: 'Apex Hooded Anorak', price: 210,
+        descEn: 'Heavyweight 520gsm technical fleece anorak with structured front pouch and cyan paracord pull.',
+        descEs: 'Anorak de felpa técnica de 520gsm con bolsillo frontal estructurado y tirador paracord cian.',
+        img: 'assets/garments/apex-anorak.webp', sizes: ['XS', 'S', 'M', 'L', 'XL']
+      },
+      {
+        id: 'pd-04', code: 'PD-04', room: 'apparel', name: 'Pulse Alpine Shell', price: 245,
+        descEn: 'Seam-sealed electric cyan and carbon windblock shell cut for high visibility after dark.',
+        descEs: 'Cortavientos sellado en cian eléctrico y carbón diseñado para alta visibilidad nocturna.',
+        img: 'assets/garments/pulse-windbreaker.webp', sizes: ['XS', 'S', 'M', 'L', 'XL']
+      },
+      {
+        id: 'pd-05', code: 'PD-05', room: 'apparel', name: 'Strata Modular Vest', price: 195,
+        descEn: 'Ballistic nylon utility rig fitted with matte hardware and quick-access front compartments.',
+        descEs: 'Chaleco modular de nylon balístico con herrajes mate y compartimentos de acceso rápido.',
+        img: 'assets/garments/strata-vest.webp', sizes: ['S', 'M', 'L', 'XL']
+      },
+      {
+        id: 'pd-06', code: 'PD-06', room: 'apparel', name: 'Drift Kimono Overshirt', price: 180,
+        descEn: 'Structured Japanese technical twill wrap jacket secured with a magnetic webbing belt.',
+        descEs: 'Sobrecamisa envolvente de sarga técnica japonesa con cinturón de cierre magnético.',
+        img: 'assets/garments/drift-kimono.webp', sizes: ['S', 'M', 'L', 'XL']
+      },
+      {
+        id: 'sn-02', code: 'SN-02', room: 'footwear', tier: 'top', name: 'Monolith High-Top', price: 220,
+        descEn: 'Bone-white matte leather high-top anchored by dual tactical ankle straps and split outsole.',
+        descEs: 'Bota alta en piel mate tono hueso con doble correa táctica al tobillo y suela partida.',
+        img: 'assets/sneakers/monolith-high.webp', sizes: ['US 7', 'US 8', 'US 9', 'US 10', 'US 11', 'US 12']
+      },
+      {
+        id: 'sn-03', code: 'SN-03', room: 'footwear', tier: 'top', name: 'Mercury Chrome Low', price: 195,
+        descEn: 'Liquid silver overlays bonded to a translucent ice-cyan sculpted runner sole.',
+        descEs: 'Paneles en plata líquida montados sobre suela esculpida translúcida en cian glaciar.',
+        img: 'assets/sneakers/mercury-chrome.webp', sizes: ['US 7', 'US 8', 'US 9', 'US 10', 'US 11', 'US 12']
+      },
+      {
+        id: 'sn-01', code: 'SN-01', room: 'footwear', tier: 'bottom', name: 'Aero Knit Runner', price: 165,
+        descEn: 'Engineered obsidian knit upper with faceted matte midsole and translucent mint heel pod.',
+        descEs: 'Tejido técnico obsidiana con mediasuela facetada mate y cápsula de talón translúcida.',
+        img: 'assets/sneakers/aero-knit.webp', sizes: ['US 7', 'US 8', 'US 9', 'US 10', 'US 11', 'US 12']
+      },
+      {
+        id: 'sn-04', code: 'SN-04', room: 'footwear', tier: 'bottom', name: 'Flux Carbon Trainer', price: 185,
+        descEn: 'Speed-laced carbon ripstop trainer resting on an electric cyan sculpted midsole.',
+        descEs: 'Zapatilla de ripstop carbón con cordón rápido sobre mediasuela esculpida en cian eléctrico.',
+        img: 'assets/sneakers/flux-carbon.webp', sizes: ['US 7', 'US 8', 'US 9', 'US 10', 'US 11', 'US 12']
+      },
+      {
+        id: 'sn-05', code: 'SN-05', room: 'footwear', tier: 'bottom', name: 'Terrain Sole GTX', price: 210,
+        descEn: 'Weatherproof slate nubuck and ripstop trail silhouette built on deep carbon lugs.',
+        descEs: 'Silueta urbana todo clima en nobuk pizarra impermeable sobre tacos profundos de carbón.',
+        img: 'assets/sneakers/terrain-gtx.webp', sizes: ['US 7', 'US 8', 'US 9', 'US 10', 'US 11', 'US 12']
+      }
+    ];
+
+    const COPY = {
+      en: {
+        skip: 'Skip to content',
+        byPd: 'Progress Digital',
+        navLookbook: 'Lookbook', navShowroom: 'Showroom', navArch: 'Architecture', navStudio: 'Studio',
+        bag: 'Bag',
+        heroTitle: 'Spatial streetwear, built without heavy 3D',
+        heroSub: 'Curved WebGL2 lookbook and studio-lit virtual showroom crafted by Progress Digital.',
+        dragHint: 'Scroll or drag the helix · Click front plate to inspect',
+        inspectPiece: 'Inspect piece',
+        enterRoom: 'Enter showroom',
+        startProject: 'Start a project',
+        roomHeadingApparel: 'Apparel rail',
+        roomHeadingFootwear: 'Footwear wall',
+        tabApparel: 'Apparel',
+        tabFootwear: 'Footwear',
+        backRail: 'Back to showroom',
+        selectSize: 'Select size',
+        addToBag: 'Add to bag',
+        added: 'Added to bag',
+        hoverPrompt: 'Select any piece to zoom in',
+        swapNote: 'Modular catalog ready for custom product photography',
+        archTitle: 'Photographic depth without 3D bloat',
+        archCopy: 'Heavy 3D garment meshes take megabytes to download and flatten fabric texture. Progress Digital pairs transparent studio cutouts with perspective staging and a zero-dependency WebGL2 spiral.',
+        scrubStudio: 'Final studio render',
+        scrubWire: '2.5D spatial mask + perspective grid',
+        stat1: 'Complete site footprint including all 11 transparent WebP studio garments and WebGL2 code',
+        stat2: 'Native curved-cylinder spiral shader with zero external JavaScript frameworks',
+        stat3: 'Ready to connect directly to Shopify Storefront, Stripe Checkout, or custom inventory',
+        studioTitle: 'Interactive flagships built to convert',
+        studioCopy: 'PD Archive is a portfolio concept built by Progress Digital. We design and engineer custom web showrooms, launches, and storefronts that feel tactile and stay fast on real phones.',
+        faq1Q: 'Can we swap in our own clothing or sneakers?',
+        faq1A: 'Yes. The entire showroom runs on a clean image manifest. Drop in your own studio cutouts or product shoots and every room, zoom view, and spiral card updates automatically.',
+        faq2Q: 'Does it connect to real payments and inventory?',
+        faq2A: 'Yes. We wire the bag and size inventory to Shopify, WooCommerce, Stripe Checkout, or direct WhatsApp ordering depending on how you sell.',
+        faq3Q: 'How fast does it load on mobile connections?',
+        faq3A: 'Under a second. Phones skip the heavy WebGL spiral loop and load a dedicated touch carousel while keeping the full showroom experience fast.',
+        formTitle: 'Start a project',
+        formSub: 'Share what you are launching and we will respond with scope, timeline, and visual direction.',
+        fName: 'Name', fNamePh: 'Alex Rivera',
+        fContact: 'Email or WhatsApp', fContactPh: 'alex@brand.com',
+        fScope: 'Project focus',
+        optShowroom: 'Spatial store or product showroom',
+        optLaunch: 'Interactive drop or campaign page',
+        optFlagship: 'Custom brand website',
+        fBrief: 'Project notes', fBriefPh: 'Timeline, catalog size, or references',
+        fSubmit: 'Send inquiry',
+        formMeta: 'Demo mode: validates locally. Wired to email, webhook, or WhatsApp on launch.',
+        formOk: 'Inquiry recorded in demo mode. Ready to route directly to Progress Digital in production.',
+        bagTitle: 'Bag',
+        bagEmpty: 'Your bag is empty. Select any garment or sneaker in the showroom to test it.',
+        subtotal: 'Subtotal',
+        checkout: 'Simulate checkout',
+        checkoutOk: 'Demo checkout confirmed. Connect Shopify or Stripe for live orders.',
+        footNote: 'PD Archive is a fictional concept showcase built as a personal portfolio piece.',
+        topLink: 'Back to top',
+        contactLink: 'Start a project',
+        remove: 'Remove',
+        pieces: 'pieces',
+        silhouettes: 'silhouettes'
+      },
+      es: {
+        skip: 'Ir al contenido',
+        byPd: 'Progress Digital',
+        navLookbook: 'Lookbook', navShowroom: 'Showroom', navArch: 'Arquitectura', navStudio: 'Estudio',
+        bag: 'Bolsa',
+        heroTitle: 'Showroom urbano espacial, sin peso 3D',
+        heroSub: 'Lookbook curvo en WebGL2 y tienda virtual con luz de estudio diseñada por Progress Digital.',
+        dragHint: 'Haz scroll o arrastra la espiral · Clic en la lámina frontal para abrir',
+        inspectPiece: 'Ver detalle',
+        enterRoom: 'Entrar al showroom',
+        startProject: 'Iniciar proyecto',
+        roomHeadingApparel: 'Riel de prendas',
+        roomHeadingFootwear: 'Muro de sneakers',
+        tabApparel: 'Prendas',
+        tabFootwear: 'Sneakers',
+        backRail: 'Volver al showroom',
+        selectSize: 'Elige talla',
+        addToBag: 'Añadir a la bolsa',
+        added: 'Añadido a la bolsa',
+        hoverPrompt: 'Selecciona cualquier pieza para acercar',
+        swapNote: 'Catálogo modular listo para cambiar por tus propias prendas',
+        archTitle: 'Profundidad fotográfica sin modelos 3D pesados',
+        archCopy: 'Las mallas 3D de ropa pesan megabytes y apagan la textura real de la tela. En Progress Digital combinamos recortes transparentes de estudio con perspectiva arquitectónica y una espiral WebGL2 sin librerías.',
+        scrubStudio: 'Acabado final de estudio',
+        scrubWire: 'Máscara espacial 2.5D + grilla en perspectiva',
+        stat1: 'Peso total del sitio incluyendo los 11 recortes WebP de estudio y el motor WebGL2',
+        stat2: 'Shader nativo de cilindro curvo sin frameworks pesados de JavaScript',
+        stat3: 'Listo para conectar directo con Shopify Storefront, Stripe Checkout o inventario propio',
+        studioTitle: 'Tiendas insignia diseñadas para convertir',
+        studioCopy: 'PD Archive es una pieza conceptual de portafolio creada por Progress Digital. Diseñamos y programamos showrooms interactivos, lanzamientos y tiendas rápidas en móviles reales.',
+        faq1Q: '¿Podemos cambiar estas prendas por nuestra propia ropa o sneakers?',
+        faq1A: 'Sí. Todo el showroom se alimenta de un catálogo limpio de imágenes. Sustituyes las fotos recortadas y cada sala, vista de zoom y lámina de la espiral se actualiza al instante.',
+        faq2Q: '¿Se conecta con pagos reales e inventario?',
+        faq2A: 'Sí. Conectamos la bolsa y las tallas a Shopify, WooCommerce, Stripe Checkout o pedidos directos por WhatsApp según tu operación.',
+        faq3Q: '¿Qué tan rápido carga en celular?',
+        faq3A: 'En menos de un segundo. Los teléfonos omiten el bucle WebGL pesado y muestran un carrusel táctil directo manteniendo fluida toda la tienda.',
+        formTitle: 'Iniciar proyecto',
+        formSub: 'Cuéntanos qué estás lanzando y te respondemos con alcance, tiempos y dirección visual.',
+        fName: 'Nombre', fNamePh: 'Carlos Mendoza',
+        fContact: 'Correo o WhatsApp', fContactPh: 'carlos@tumarca.com',
+        fScope: 'Tipo de proyecto',
+        optShowroom: 'Tienda espacial o showroom de producto',
+        optLaunch: 'Landing de lanzamiento o campaña',
+        optFlagship: 'Sitio web a medida para marca',
+        fBrief: 'Notas del proyecto', fBriefPh: 'Fechas, tamaño de catálogo o referencias',
+        fSubmit: 'Enviar solicitud',
+        formMeta: 'Modo demo: valida localmente. En producción se conecta a correo, webhook o WhatsApp.',
+        formOk: 'Solicitud registrada en modo demo. Lista para llegar directo a Progress Digital en producción.',
+        bagTitle: 'Bolsa',
+        bagEmpty: 'Tu bolsa está vacía. Selecciona cualquier prenda o sneaker en el showroom para probarla.',
+        subtotal: 'Subtotal',
+        checkout: 'Simular compra',
+        checkoutOk: 'Compra demo confirmada. Conecta Shopify o Stripe para pedidos reales.',
+        footNote: 'PD Archive es un concepto ficticio creado como pieza personal de portafolio.',
+        topLink: 'Volver arriba',
+        contactLink: 'Iniciar proyecto',
+        remove: 'Quitar',
+        pieces: 'piezas',
+        silhouettes: 'siluetas'
+      }
+    };
+
+    let lang = localStorage.getItem('pd_v2_lang') || 'en';
+    if (!COPY[lang]) lang = 'en';
+    const t = k => COPY[lang][k] || COPY.en[k] || k;
+
+    let currentRoom = 'apparel';
+    let inspectedIdx = -1;
+    let activeSize = 'M';
+    let activeQty = 1;
+    const bag = [];
+
+    function setLang(next) {
+      lang = next;
+      localStorage.setItem('pd_v2_lang', lang);
+      document.documentElement.lang = lang;
+      document.getElementById('btnEn').setAttribute('aria-pressed', String(lang === 'en'));
+      document.getElementById('btnEs').setAttribute('aria-pressed', String(lang === 'es'));
+      document.querySelectorAll('[data-i18n]').forEach(el => el.textContent = t(el.dataset.i18n));
+      document.querySelectorAll('[data-i18n-ph]').forEach(el => el.placeholder = t(el.dataset.i18nPh));
+      updateRoomHeader();
+      renderBag();
+      if (inspectedIdx >= 0) fillInspect(CATALOG[inspectedIdx]);
+    }
+    document.getElementById('btnEn').addEventListener('click', () => setLang('en'));
+    document.getElementById('btnEs').addEventListener('click', () => setLang('es'));
+
+    /* =========================================================================
+       SHOWROOM BUILD & ROOM / IN-ROOM INSPECTION SWITCHING
+       ========================================================================= */
+    const viewApparel = document.getElementById('viewApparel');
+    const viewFootwear = document.getElementById('viewFootwear');
+    const viewInspect = document.getElementById('viewInspect');
+    const tabApparel = document.getElementById('tabApparel');
+    const tabFootwear = document.getElementById('tabFootwear');
+    const roomHeading = document.getElementById('showroomHeading');
+    const roomCount = document.getElementById('roomCount');
+    const roomReadout = document.getElementById('roomReadout');
+
+    function updateRoomHeader() {
+      const isApparel = currentRoom === 'apparel';
+      roomHeading.textContent = isApparel ? t('roomHeadingApparel') : t('roomHeadingFootwear');
+      roomCount.textContent = isApparel ? `6 ${t('pieces')}` : `5 ${t('silhouettes')}`;
+      tabApparel.setAttribute('aria-selected', String(isApparel));
+      tabFootwear.setAttribute('aria-selected', String(!isApparel));
+    }
+
+    function showRoom(room) {
+      currentRoom = room;
+      inspectedIdx = -1;
+      viewInspect.classList.add('hidden');
+      viewApparel.classList.toggle('hidden', room !== 'apparel');
+      viewFootwear.classList.toggle('hidden', room !== 'footwear');
+      updateRoomHeader();
+    }
+
+    tabApparel.addEventListener('click', () => showRoom('apparel'));
+    tabFootwear.addEventListener('click', () => showRoom('footwear'));
+
+    function fillInspect(item) {
+      document.getElementById('inspectImg').src = item.img;
+      document.getElementById('inspectImg').alt = item.name;
+      document.getElementById('inspectCode').textContent = item.code;
+      document.getElementById('inspectPrice').textContent = `$${item.price}`;
+      document.getElementById('inspectTitle').textContent = item.name;
+      document.getElementById('inspectDesc').textContent = lang === 'es' ? item.descEs : item.descEn;
+
+      if (!item.sizes.includes(activeSize)) activeSize = item.sizes[Math.min(2, item.sizes.length - 1)];
+      const list = document.getElementById('sizeList');
+      list.innerHTML = '';
+      item.sizes.forEach(s => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'size-opt' + (s === activeSize ? ' active' : '');
+        b.textContent = s;
+        b.addEventListener('click', () => {
+          activeSize = s;
+          list.querySelectorAll('.size-opt').forEach(x => x.classList.toggle('active', x.textContent === s));
+        });
+        list.appendChild(b);
+      });
+      document.getElementById('qtyNum').textContent = String(activeQty);
+      document.getElementById('addBagBtn').textContent = t('addToBag');
+    }
+
+    function openPieceInRoom(idx, scrollToRoom = false) {
+      inspectedIdx = idx;
+      activeQty = 1;
+      currentRoom = CATALOG[idx].room;
+      updateRoomHeader();
+      fillInspect(CATALOG[idx]);
+      viewApparel.classList.add('hidden');
+      viewFootwear.classList.add('hidden');
+      viewInspect.classList.remove('hidden');
+      if (scrollToRoom) {
+        document.getElementById('showroom').scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    document.getElementById('backToRoom').addEventListener('click', () => showRoom(currentRoom));
+    document.getElementById('prevPiece').addEventListener('click', () => {
+      const next = (inspectedIdx - 1 + CATALOG.length) % CATALOG.length;
+      openPieceInRoom(next, false);
+    });
+    document.getElementById('nextPiece').addEventListener('click', () => {
+      const next = (inspectedIdx + 1) % CATALOG.length;
+      openPieceInRoom(next, false);
+    });
+    document.getElementById('qtyDec').addEventListener('click', () => {
+      activeQty = Math.max(1, activeQty - 1);
+      document.getElementById('qtyNum').textContent = String(activeQty);
+    });
+    document.getElementById('qtyInc').addEventListener('click', () => {
+      activeQty = Math.min(9, activeQty + 1);
+      document.getElementById('qtyNum').textContent = String(activeQty);
+    });
+
+    // Spring-damped subtle 3D tilt on inspected garment (Kowalski spring feel)
+    const inspectStage = document.getElementById('inspectStage');
+    const inspectImg = document.getElementById('inspectImg');
+    let tiltTx = 0, tiltTy = 0, tiltCx = 0, tiltCy = 0, tiltRaf = null;
+    function stepTilt() {
+      tiltCx += (tiltTx - tiltCx) * 0.14;
+      tiltCy += (tiltTy - tiltCy) * 0.14;
+      inspectImg.style.transform = `perspective(760px) rotateY(${tiltCx.toFixed(2)}deg) rotateX(${tiltCy.toFixed(2)}deg)`;
+      if (Math.abs(tiltTx - tiltCx) > 0.05 || Math.abs(tiltTy - tiltCy) > 0.05) {
+        tiltRaf = requestAnimationFrame(stepTilt);
+      } else {
+        tiltRaf = null;
+      }
+    }
+    inspectStage.addEventListener('pointermove', e => {
+      if (e.pointerType === 'touch' || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const r = inspectStage.getBoundingClientRect();
+      tiltTx = ((e.clientX - r.left) / r.width - 0.5) * 14;
+      tiltTy = ((e.clientY - r.top) / r.height - 0.5) * -10;
+      if (!tiltRaf) tiltRaf = requestAnimationFrame(stepTilt);
+    });
+    inspectStage.addEventListener('pointerleave', () => {
+      tiltTx = 0; tiltTy = 0;
+      if (!tiltRaf) tiltRaf = requestAnimationFrame(stepTilt);
+    });
+
+    function buildRooms() {
+      const apparelGrid = document.getElementById('apparelGrid');
+      const shelfTop = document.getElementById('shelfTop');
+      const shelfBottom = document.getElementById('shelfBottom');
+      const staticCarousel = document.getElementById('staticCarousel');
+
+      CATALOG.forEach((item, idx) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'piece-btn' + (item.room === 'footwear' ? ' sneaker-piece' : '');
+        btn.setAttribute('role', 'listitem');
+        btn.setAttribute('aria-label', `${item.name} $${item.price}`);
+        btn.innerHTML = `
+          <span class="piece-tag num">${item.code}</span>
+          <span class="piece-ticks" aria-hidden="true"></span>
+          <img src="${item.img}" alt="${item.name}" loading="${idx < 6 ? 'eager' : 'lazy'}" decoding="async">
+        `;
+
+        const setReadout = () => {
+          roomReadout.innerHTML = `<strong>${item.name}</strong><span class="r-price num">$${item.price}</span>`;
+        };
+        const clearReadout = () => {
+          roomReadout.innerHTML = `<strong>${t('hoverPrompt')}</strong><span class="r-price num">$165 - $290</span>`;
+        };
+
+        btn.addEventListener('mouseenter', setReadout);
+        btn.addEventListener('focus', setReadout);
+        btn.addEventListener('mouseleave', clearReadout);
+        btn.addEventListener('click', () => openPieceInRoom(idx, false));
+
+        if (item.room === 'apparel') apparelGrid.appendChild(btn);
+        else if (item.tier === 'top') shelfTop.appendChild(btn);
+        else shelfBottom.appendChild(btn);
+
+        if (['pd-01', 'pd-02', 'pd-04', 'sn-03', 'sn-04', 'sn-02'].includes(item.id)) {
+          const sp = document.createElement('button');
+          sp.type = 'button';
+          sp.className = 'static-plate';
+          sp.innerHTML = `
+            <img src="${item.img}" alt="${item.name}" loading="lazy">
+            <div class="static-plate-row"><span>${item.code}</span><strong>$${item.price}</strong></div>
+          `;
+          sp.addEventListener('click', () => openPieceInRoom(idx, true));
+          staticCarousel.appendChild(sp);
+        }
+      });
+
+      const l1 = document.createElement('div'); l1.className = 'shelf-ledge'; l1.setAttribute('aria-hidden', 'true');
+      const l2 = document.createElement('div'); l2.className = 'shelf-ledge'; l2.setAttribute('aria-hidden', 'true');
+      shelfTop.appendChild(l1);
+      shelfBottom.appendChild(l2);
+    }
+
+    /* =========================================================================
+       BAG DRAWER
+       ========================================================================= */
+    const drawer = document.getElementById('bagDrawer');
+    const drawerScrim = document.getElementById('drawerScrim');
+    const drawerNote = document.getElementById('drawerNote');
+
+    function openBag() {
+      drawer.classList.add('open');
+      drawerScrim.classList.add('open');
+      drawer.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('locked');
+    }
+    function closeBag() {
+      drawer.classList.remove('open');
+      drawerScrim.classList.remove('open');
+      drawer.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('locked');
+    }
+
+    function renderBag() {
+      const count = bag.reduce((a, b) => a + b.qty, 0);
+      const total = bag.reduce((a, b) => a + b.price * b.qty, 0);
+      document.getElementById('bagCount').textContent = String(count);
+      document.getElementById('bagSub').textContent = `$${total}`;
+      drawerNote.classList.remove('show');
+
+      const body = document.getElementById('bagBody');
+      if (!bag.length) {
+        body.innerHTML = `<p class="drawer-empty">${t('bagEmpty')}</p>`;
+        return;
+      }
+      body.innerHTML = '';
+      bag.forEach((it, i) => {
+        const row = document.createElement('div');
+        row.className = 'bag-row';
+        row.innerHTML = `
+          <img src="${it.img}" alt="${it.name}">
+          <div>
+            <div class="bag-row-title">${it.name}</div>
+            <div class="bag-row-meta num">${it.code} · ${it.size} × ${it.qty} · $${it.price * it.qty}</div>
+          </div>
+          <button class="bag-del" type="button">${t('remove')}</button>
+        `;
+        row.querySelector('.bag-del').addEventListener('click', () => { bag.splice(i, 1); renderBag(); });
+        body.appendChild(row);
+      });
+    }
+
+    document.getElementById('addBagBtn').addEventListener('click', () => {
+      if (inspectedIdx < 0) return;
+      const item = CATALOG[inspectedIdx];
+      const hit = bag.find(x => x.id === item.id && x.size === activeSize);
+      if (hit) hit.qty += activeQty;
+      else bag.push({ id: item.id, code: item.code, name: item.name, price: item.price, img: item.img, size: activeSize, qty: activeQty });
+      renderBag();
+      document.getElementById('addBagBtn').textContent = t('added');
+      setTimeout(openBag, 240);
+    });
+    document.getElementById('openBagBtn').addEventListener('click', openBag);
+    document.getElementById('closeBagBtn').addEventListener('click', closeBag);
+    drawerScrim.addEventListener('click', closeBag);
+    document.getElementById('checkoutBtn').addEventListener('click', () => {
+      if (bag.length) drawerNote.classList.add('show');
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        if (drawer.classList.contains('open')) closeBag();
+        else if (inspectedIdx >= 0) showRoom(currentRoom);
+      }
+      if (inspectedIdx >= 0 && !drawer.classList.contains('open')) {
+        if (e.key === 'ArrowLeft') document.getElementById('prevPiece').click();
+        if (e.key === 'ArrowRight') document.getElementById('nextPiece').click();
+      }
+    });
+
+    /* =========================================================================
+       NATIVE WEBGL2 CENTERED MONUMENTAL SPIRAL FLUX CAROUSEL
+       ========================================================================= */
+    const PLATES = [
+      { idx: 0, style: 'studio', tone: '#141922', mark: '#F4C430' },
+      { idx: 1, style: 'studio', tone: '#12161E', mark: '#18C8F0' },
+      { idx: 7, style: 'editorialSignal', num: '03', label: 'DROP 01' },
+      { idx: 3, style: 'editorialLight', num: '04', label: 'Archive 26' },
+      { idx: 3, style: 'studio', tone: '#101922', mark: '#18C8F0' },
+      { idx: 9, style: 'studio', tone: '#131720', mark: '#F4C430' },
+      { idx: 6, style: 'studio', tone: '#171A1F', mark: '#18C8F0' },
+      { idx: 4, style: 'editorialDark', num: '08', label: 'Progress Digital' }
+    ];
+
+    const GATES = [
+      '(prefers-reduced-motion: reduce)'
+    ];
+
+    const lookbookSec = document.getElementById('lookbook');
+    const canvas = document.getElementById('spiralCanvas');
+    const spiralIdxEl = document.getElementById('spiralIdx');
+    const spiralNameEl = document.getElementById('spiralName');
+    const spiralPriceEl = document.getElementById('spiralPrice');
+
+    let glCtx = null;
+    let spiralActive = false;
+    let spiralVisible = true;
+    let targetProg = 0, shownProg = 0;
+    let targetDrag = 0, shownDrag = 0;
+    let vel = 0;
+    let rafId = null, lastTs = 0;
+    let frontPlate = 0, lastFront = -1;
+
+    function renderPlateTexture(spec, imgEl, logoEl) {
+      const c = document.createElement('canvas');
+      c.width = 768;
+      c.height = 540;
+      const ctx = c.getContext('2d');
+
+      if (spec.style === 'editorialSignal') {
+        const g = ctx.createLinearGradient(0, 0, c.width, c.height);
+        g.addColorStop(0, '#F4C430');
+        g.addColorStop(1, '#CFA017');
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, c.width, c.height);
+        ctx.strokeStyle = 'rgba(9,11,14,0.18)';
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(24, 24, c.width - 48, c.height - 48);
+        ctx.fillStyle = '#090B0E';
+        ctx.font = '500 22px "JetBrains Mono", monospace';
+        ctx.fillText(`${spec.num}  ·  ${spec.label}`, 52, 74);
+        if (imgEl && imgEl.complete && imgEl.naturalWidth) {
+          const maxW = c.width - 140;
+          const maxH = c.height - 150;
+          const sc = Math.min(maxW / imgEl.naturalWidth, maxH / imgEl.naturalHeight);
+          const dw = imgEl.naturalWidth * sc;
+          const dh = imgEl.naturalHeight * sc;
+          ctx.save();
+          ctx.shadowColor = 'rgba(9,11,14,0.42)';
+          ctx.shadowBlur = 28;
+          ctx.shadowOffsetY = 18;
+          ctx.drawImage(imgEl, (c.width - dw) / 2, (c.height - dh) / 2 + 12, dw, dh);
+          ctx.restore();
+        }
+        ctx.fillStyle = '#090B0E';
+        ctx.font = '600 38px "Geist", -apple-system, sans-serif';
+        ctx.fillText('Mercury Chrome', 52, c.height - 48);
+        return c;
+      }
+
+      if (spec.style === 'editorialLight') {
+        ctx.fillStyle = '#ECEFF3';
+        ctx.fillRect(0, 0, c.width, c.height);
+        ctx.fillStyle = '#F4C430';
+        ctx.beginPath(); ctx.arc(c.width - 72, 72, 13, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#0B0D10';
+        ctx.font = '600 162px "Geist", -apple-system, sans-serif';
+        ctx.fillText('PD', 52, 238);
+        ctx.font = '500 22px "JetBrains Mono", monospace';
+        ctx.fillStyle = '#536070';
+        ctx.fillText(`${spec.num}  ·  ${spec.label}`, 58, 468);
+        if (logoEl && logoEl.complete && logoEl.naturalWidth) {
+          ctx.drawImage(logoEl, c.width - 170, c.height - 170, 112, 112);
+        }
+        return c;
+      }
+
+      if (spec.style === 'editorialDark') {
+        ctx.fillStyle = '#0F131A';
+        ctx.fillRect(0, 0, c.width, c.height);
+        ctx.strokeStyle = 'rgba(240,243,247,0.08)';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(24, 24, c.width - 48, c.height - 48);
+        ctx.fillStyle = '#F4C430';
+        ctx.fillRect(56, 62, 48, 5);
+        ctx.fillStyle = '#F3F5F8';
+        ctx.font = '500 112px "Geist", -apple-system, sans-serif';
+        ctx.fillText('Night', 54, 224);
+        ctx.fillStyle = '#99A3B2';
+        ctx.fillText('Archive', 54, 340);
+        ctx.fillStyle = '#18C8F0';
+        ctx.font = '500 20px "JetBrains Mono", monospace';
+        ctx.fillText('PROGRESS DIGITAL', 58, 466);
+        return c;
+      }
+
+      // Clean gallery photographic plate with crisp corner accent mark
+      const g = ctx.createRadialGradient(c.width * 0.5, c.height * 0.44, 20, c.width * 0.5, c.height * 0.5, 460);
+      g.addColorStop(0, '#222833');
+      g.addColorStop(0.62, spec.tone);
+      g.addColorStop(1, '#0B0E13');
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, c.width, c.height);
+
+      ctx.fillStyle = spec.mark || '#F4C430';
+      ctx.fillRect(28, 28, 36, 4);
+
+      if (imgEl && imgEl.complete && imgEl.naturalWidth) {
+        const maxW = c.width - 130;
+        const maxH = c.height - 104;
+        const sc = Math.min(maxW / imgEl.naturalWidth, maxH / imgEl.naturalHeight);
+        const dw = imgEl.naturalWidth * sc;
+        const dh = imgEl.naturalHeight * sc;
+        ctx.save();
+        ctx.shadowColor = 'rgba(0,0,0,0.72)';
+        ctx.shadowBlur = 30;
+        ctx.shadowOffsetY = 18;
+        ctx.drawImage(imgEl, (c.width - dw) / 2, (c.height - dh) / 2, dw, dh);
+        ctx.restore();
+      }
+      ctx.strokeStyle = 'rgba(240,243,247,0.12)';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(1, 1, c.width - 2, c.height - 2);
+      return c;
+    }
+
+    function initSpiralGL() {
+      if (glCtx) return;
+      const gl = canvas.getContext('webgl2', { antialias: true, alpha: true, powerPreference: 'high-performance' });
+      if (!gl) {
+        document.body.classList.add('no-webgl');
+        return;
+      }
+
+      const vs = `#version 300 es
+        precision highp float;
+        in vec2 aUv;
+        uniform mat4 uProj;
+        uniform float uRadius;
+        uniform float uArc;
+        uniform float uHeight;
+        uniform float uAngle;
+        uniform float uYOff;
+        uniform float uTilt;
+        out vec2 vUv;
+        out float vDepth;
+        out float vEdge;
+        void main() {
+          float th = uAngle + (aUv.x - 0.5) * uArc;
+          float x = sin(th) * uRadius;
+          float z = cos(th) * uRadius - 5.35;
+          float y = uYOff + (0.5 - aUv.y) * uHeight + sin(th) * uTilt;
+          gl_Position = uProj * vec4(x, y, z, 1.0);
+          vUv = aUv;
+          vDepth = clamp((cos(th) + 1.0) * 0.5, 0.0, 1.0);
+          vEdge = abs(aUv.x - 0.5) * 2.0;
+        }
+      `;
+      const fs = `#version 300 es
+        precision highp float;
+        in vec2 vUv;
+        in float vDepth;
+        in float vEdge;
+        uniform sampler2D uTex;
+        uniform float uVel;
+        out vec4 outColor;
+        void main() {
+          float fringe = (0.0025 + min(abs(uVel) * 0.016, 0.02)) * pow(vEdge, 1.8);
+          float r = texture(uTex, vec2(clamp(vUv.x + fringe, 0.0, 1.0), vUv.y)).r;
+          float g = texture(uTex, vUv).g;
+          float b = texture(uTex, vec2(clamp(vUv.x - fringe, 0.0, 1.0), vUv.y)).b;
+          vec3 col = vec3(r, g, b);
+          float shade = mix(0.16, 1.03, smoothstep(0.24, 0.92, vDepth));
+          col *= shade;
+          float alpha = mix(0.18, 0.99, smoothstep(0.24, 0.80, vDepth));
+          outColor = vec4(col, alpha);
+        }
+      `;
+      const mk = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); return s; };
+      const prog = gl.createProgram();
+      gl.attachShader(prog, mk(gl.VERTEX_SHADER, vs));
+      gl.attachShader(prog, mk(gl.FRAGMENT_SHADER, fs));
+      gl.linkProgram(prog);
+
+      const cols = 20, rows = 6, verts = [], idxs = [];
+      for (let r = 0; r <= rows; r++) for (let c = 0; c <= cols; c++) verts.push(c / cols, r / rows);
+      for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+        const i = r * (cols + 1) + c;
+        idxs.push(i, i + 1, i + cols + 1, i + 1, i + cols + 2, i + cols + 1);
+      }
+
+      const vao = gl.createVertexArray();
+      gl.bindVertexArray(vao);
+      const vb = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, vb); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(verts), gl.STATIC_DRAW);
+      const loc = gl.getAttribLocation(prog, 'aUv'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+      const ib = gl.createBuffer(); gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ib); gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(idxs), gl.STATIC_DRAW);
+
+      const textures = PLATES.map(() => {
+        const tex = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, tex);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([20, 25, 34, 255]));
+        return tex;
+      });
+
+      const u = {
+        uProj: gl.getUniformLocation(prog, 'uProj'),
+        uRadius: gl.getUniformLocation(prog, 'uRadius'),
+        uArc: gl.getUniformLocation(prog, 'uArc'),
+        uHeight: gl.getUniformLocation(prog, 'uHeight'),
+        uAngle: gl.getUniformLocation(prog, 'uAngle'),
+        uYOff: gl.getUniformLocation(prog, 'uYOff'),
+        uTilt: gl.getUniformLocation(prog, 'uTilt'),
+        uVel: gl.getUniformLocation(prog, 'uVel')
+      };
+
+      glCtx = { gl, prog, vao, count: idxs.length, textures, u };
+
+      const logo = new Image();
+      logo.src = 'assets/logo.webp';
+      let uploaded = false;
+      const loadAll = () => {
+        if (uploaded) return;
+        uploaded = true;
+        PLATES.forEach((spec, i) => {
+          const im = new Image();
+          im.onload = () => {
+            const c = renderPlateTexture(spec, im, logo);
+            gl.bindTexture(gl.TEXTURE_2D, textures[i]);
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, c);
+            gl.generateMipmap(gl.TEXTURE_2D);
+            kickSpiral();
+          };
+          im.src = CATALOG[spec.idx].img;
+        });
+      };
+      logo.onload = loadAll;
+      logo.onerror = loadAll;
+      setTimeout(loadAll, 350);
+
+      resizeCanvas();
+      addEventListener('resize', resizeCanvas, { passive: true });
+    }
+
+    function projMatrix(fov, aspect, near, far) {
+      const f = 1 / Math.tan(fov / 2), nf = 1 / (near - far);
+      return new Float32Array([f / aspect, 0, 0, 0, 0, f, 0, 0, 0, 0, (far + near) * nf, -1, 0, 0, 2 * far * near * nf, 0]);
+    }
+
+    function resizeCanvas() {
+      if (!glCtx) return;
+      const maxDpr = innerWidth < 720 ? 1.5 : 2;
+      const dpr = Math.min(maxDpr, window.devicePixelRatio || 1);
+      canvas.width = Math.round((canvas.clientWidth || innerWidth) * dpr);
+      canvas.height = Math.round((canvas.clientHeight || innerHeight) * dpr);
+      glCtx.gl.viewport(0, 0, canvas.width, canvas.height);
+      kickSpiral();
+    }
+
+    function drawSpiral(p, dAngle, v) {
+      if (!glCtx) return;
+      const { gl, prog, vao, count, textures, u } = glCtx;
+      gl.clearColor(0, 0, 0, 0);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.enable(gl.BLEND);
+      gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+      gl.useProgram(prog);
+      gl.bindVertexArray(vao);
+
+      const aspect = (canvas.width || 1) / (canvas.height || 1);
+      const portrait = aspect < 0.85;
+      gl.uniformMatrix4fv(u.uProj, false, projMatrix(portrait ? 0.78 : 0.72, aspect, 0.1, 40));
+
+      const rot = p * Math.PI * 2.4 + dAngle;
+      const step = (Math.PI * 2) / PLATES.length;
+      const ySpread = portrait ? 1.62 : 1.48;
+      const list = PLATES.map((pl, i) => {
+        const a = i * step - rot;
+        const rel = ((a + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
+        return { i, a, depth: Math.cos(a), y: (rel / Math.PI) * ySpread + (portrait ? -0.06 : 0) };
+      }).sort((a, b) => a.depth - b.depth);
+
+      const top = list[list.length - 1];
+      frontPlate = top.i;
+      if (frontPlate !== lastFront) {
+        lastFront = frontPlate;
+        const item = CATALOG[PLATES[frontPlate].idx];
+        spiralIdxEl.textContent = `0${frontPlate + 1} / 0${PLATES.length}`;
+        spiralNameEl.textContent = item.name;
+        spiralPriceEl.textContent = `$${item.price}`;
+      }
+
+      gl.uniform1f(u.uRadius, portrait ? 1.18 : (aspect > 1.2 ? 2.45 : 2.05));
+      gl.uniform1f(u.uArc, portrait ? 0.98 : 0.72);
+      gl.uniform1f(u.uHeight, portrait ? 0.76 : 1.12);
+      gl.uniform1f(u.uTilt, portrait ? 0.16 : 0.22);
+      gl.uniform1f(u.uVel, v);
+
+      for (const it of list) {
+        gl.uniform1f(u.uAngle, it.a);
+        gl.uniform1f(u.uYOff, it.y);
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, textures[it.i]);
+        gl.drawElements(gl.TRIANGLES, count, gl.UNSIGNED_SHORT, 0);
+      }
+    }
+
+    function spiralProgress() {
+      const r = lookbookSec.getBoundingClientRect();
+      return Math.min(1, Math.max(0, -r.top / Math.max(1, lookbookSec.offsetHeight - innerHeight)));
+    }
+
+    function tick(now) {
+      const dt = Math.min(100, now - (lastTs || now));
+      lastTs = now;
+      const prevP = shownProg, prevD = shownDrag;
+      const f = 1 - Math.pow(1 - 0.14, dt / 16.667);
+      shownProg += (targetProg - shownProg) * f;
+      shownDrag += (targetDrag - shownDrag) * f;
+      vel = ((shownProg - prevP) * 8 + (shownDrag - prevD) * 2) / Math.max(0.008, dt / 1000);
+
+      drawSpiral(shownProg, shownDrag, vel);
+
+      if (Math.abs(targetProg - shownProg) < 0.0004 && Math.abs(targetDrag - shownDrag) < 0.0006) {
+        shownProg = targetProg;
+        shownDrag = targetDrag;
+        drawSpiral(shownProg, shownDrag, 0);
+        rafId = null;
+        lastTs = 0;
+      } else {
+        rafId = requestAnimationFrame(tick);
+      }
+    }
+
+    function kickSpiral() {
+      if (spiralActive && spiralVisible && rafId === null) rafId = requestAnimationFrame(tick);
+    }
+    function onSpiralScroll() {
+      targetProg = spiralProgress();
+      kickSpiral();
+    }
+
+    // Drag + click on 3D Spiral
+    let isDrag = false, sx = 0, sy = 0, moved = 0;
+    canvas.addEventListener('pointerdown', e => {
+      if (!spiralActive) return;
+      isDrag = true; moved = 0; sx = e.clientX; sy = e.clientY;
+      canvas.classList.add('dragging');
+      canvas.setPointerCapture(e.pointerId);
+    });
+    canvas.addEventListener('pointermove', e => {
+      if (!isDrag) return;
+      const dx = e.clientX - sx, dy = e.clientY - sy;
+      sx = e.clientX; sy = e.clientY;
+      moved += Math.abs(dx) + Math.abs(dy);
+      targetDrag -= (dx * 0.0055 + dy * 0.002);
+      kickSpiral();
+    });
+    const finishDrag = () => {
+      if (!isDrag) return;
+      isDrag = false;
+      canvas.classList.remove('dragging');
+      if (moved < 8) openPieceInRoom(PLATES[frontPlate].idx, true);
+    };
+    canvas.addEventListener('pointerup', finishDrag);
+    canvas.addEventListener('pointercancel', finishDrag);
+    document.getElementById('spiralInspectBtn').addEventListener('click', () => {
+      openPieceInRoom(PLATES[frontPlate].idx, true);
+    });
+
+    const MQLS = GATES.map(q => matchMedia(q));
+    function applyGates() {
+      const blocked = MQLS.some(m => m.matches);
+      if (blocked && spiralActive) {
+        spiralActive = false;
+        removeEventListener('scroll', onSpiralScroll);
+        if (rafId !== null) { cancelAnimationFrame(rafId); rafId = null; }
+      } else if (!blocked && !spiralActive) {
+        spiralActive = true;
+        initSpiralGL();
+        addEventListener('scroll', onSpiralScroll, { passive: true });
+        targetProg = spiralProgress();
+        shownProg = targetProg;
+        kickSpiral();
+      }
+    }
+    MQLS.forEach(m => m.addEventListener('change', applyGates));
+
+    new IntersectionObserver(entries => {
+      spiralVisible = entries[0].isIntersecting;
+      if (spiralVisible) kickSpiral();
+      else if (rafId !== null) { cancelAnimationFrame(rafId); rafId = null; lastTs = 0; }
+    }, { threshold: 0.01 }).observe(lookbookSec);
+
+    /* =========================================================================
+       INTERACTIVE WIREFRAME SCRUBBER, NAV TRACKING & FORM
+       ========================================================================= */
+    const scrubberStage = document.getElementById('scrubberStage');
+    const scrubRange = document.getElementById('scrubRange');
+    scrubRange.addEventListener('input', () => {
+      scrubberStage.style.setProperty('--split', `${scrubRange.value}%`);
+    });
+
+    const topbar = document.getElementById('topbar');
+    addEventListener('scroll', () => topbar.classList.toggle('solid', scrollY > 40), { passive: true });
+
+    const navObs = new IntersectionObserver(entries => {
+      entries.forEach(en => {
+        if (!en.isIntersecting) return;
+        const id = en.target.id === 'lookbook-static' ? 'lookbook' : en.target.id;
+        document.querySelectorAll('[data-nav]').forEach(a => a.classList.toggle('active', a.dataset.nav === id));
+      });
+    }, { rootMargin: '-40% 0px -45% 0px' });
+    ['lookbook', 'lookbook-static', 'showroom', 'architecture', 'studio'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) navObs.observe(el);
+    });
+
+    document.getElementById('studioForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const f = e.currentTarget;
+      if (!f.name.value.trim()) { f.name.focus(); return; }
+      if (!f.contact.value.trim()) { f.contact.focus(); return; }
+      document.getElementById('formOk').classList.add('show');
+      f.reset();
+    });
+
+    document.addEventListener('visibilitychange', () => {
+      document.body.classList.toggle('paused', document.hidden);
+    });
+
+    // Boot
+    buildRooms();
+    setLang(lang);
+    applyGates();
+  </script>
+</body>
+</html>
