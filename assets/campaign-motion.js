@@ -70,7 +70,6 @@ if (figure && pose && canvas && replay && gsap) {
       clearTimeout(startTimer);
       stop();
     } else if (!played && !reduced.matches && !document.hidden) {
-      loadOrbit();
       startTimer = setTimeout(play, 1700);
     }
   }, { threshold: .25 });
@@ -90,5 +89,6 @@ if (figure && pose && canvas && replay && gsap) {
       stop();
     }
   });
-  replay.hidden = false;
+  replay.classList.remove('is-pending');
+  replay.removeAttribute('hidden');
 }

@@ -12,11 +12,32 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://example.com/">
   <meta property="og:image" content="https://example.com/assets/logo.webp">
-  <link rel="icon" type="image/webp" href="assets/logo.webp">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/webp" href="assets/logo-sm.webp">
   <style>
+    @font-face {
+      font-family: Geist;
+      src: url('assets/fonts/geist-latin-var.woff2') format('woff2');
+      font-weight: 400 650;
+      font-style: normal;
+      font-display: swap;
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    }
+    @font-face {
+      font-family: 'Geist Fallback';
+      src: local('Arial'), local('Helvetica Neue'), local('DejaVu Sans');
+      size-adjust: 100%;
+      ascent-override: 93%;
+      descent-override: 24%;
+      line-gap-override: 0%;
+    }
+    @font-face {
+      font-family: 'JetBrains Mono';
+      src: url('assets/fonts/jetbrains-mono-latin-var.woff2') format('woff2');
+      font-weight: 400 500;
+      font-style: normal;
+      font-display: swap;
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    }
     @font-face {
       font-family: Michroma;
       src: url('assets/fonts/michroma-latin-400.woff2') format('woff2');
@@ -47,8 +68,8 @@
       --signal-ink: #090B0E;
 
       /* Neo-Grotesque tight display typography (Skiper UI character) */
-      --font-display: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
-      --font-sans: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-display: 'Geist', 'Geist Fallback', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-sans: 'Geist', 'Geist Fallback', -apple-system, BlinkMacSystemFont, sans-serif;
       --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 
       /* Kowalski motion curves */
@@ -96,13 +117,14 @@
     }
 
     .skip-link {
-      position: fixed; top: -80px; left: 20px; z-index: 900;
+      position: fixed; top: 16px; left: 20px; z-index: 900;
       background: var(--signal); color: var(--signal-ink);
       padding: 10px 18px; border-radius: 999px; font-size: 0.82rem; font-weight: 500;
       text-decoration: none;
-      transition: top 180ms var(--ease-out);
+      transform: translateY(-96px);
+      transition: transform 180ms var(--ease-out);
     }
-    .skip-link:focus { top: 16px; }
+    .skip-link:focus { transform: translateY(0); }
 
     /* ================= QUIET TOP CHROME ================= */
     .topbar {
@@ -697,8 +719,6 @@
       object-fit: contain;
       pointer-events: none;
       transform-origin: 50% 4%;
-      --rail-brush: 0deg;
-      transform: translateY(var(--rail-drop, 0px)) rotateZ(calc(var(--rail-sway, 0deg) + var(--rail-brush)));
       filter: drop-shadow(10px 22px 14px #0009);
     }
     .rail-controls {
@@ -1049,6 +1069,8 @@
       border-top: 1px solid var(--hairline);
       padding: clamp(72px, 9vw, 128px) clamp(20px, 4vw, 56px);
       background: var(--bg);
+      content-visibility: auto;
+      contain-intrinsic-size: auto 760px;
     }
     .craft-inner {
       max-width: 1360px;
@@ -1113,7 +1135,7 @@
         linear-gradient(rgba(24, 200, 240, 0.12) 1px, transparent 1px),
         linear-gradient(90deg, rgba(24, 200, 240, 0.12) 1px, transparent 1px);
       background-size: 40px 40px;
-      clip-path: inset(0 calc(100% - var(--split, 50%)) 0 0);
+      clip-path: inset(0 54% 0 0);
     }
     .scrub-wire-inner {
       position: relative;
@@ -1155,16 +1177,22 @@
     }
     .scrub-handle {
       position: absolute;
-      top: 0; bottom: 0;
-      left: var(--split, 50%);
-      width: 1px;
-      background: var(--accent);
+      inset: 0;
+      width: 100%;
+      transform: translateX(46%);
       pointer-events: none;
       z-index: 4;
     }
+    .scrub-handle::before {
+      content: "";
+      position: absolute;
+      top: 0; bottom: 0; left: 0;
+      width: 1px;
+      background: var(--accent);
+    }
     .scrub-knob {
       position: absolute;
-      top: 50%; left: 50%;
+      top: 50%; left: 0;
       transform: translate(-50%, -50%);
       width: 40px; height: 40px;
       border-radius: 50%;
@@ -1220,6 +1248,8 @@
     .studio-band {
       padding: clamp(72px, 9vw, 128px) clamp(20px, 4vw, 56px) 96px;
       background: var(--bg);
+      content-visibility: auto;
+      contain-intrinsic-size: auto 760px;
     }
     .studio-inner {
       max-width: 1360px;
@@ -1409,6 +1439,8 @@
       border-top: 1px solid var(--hairline);
       padding: 28px clamp(20px, 4vw, 56px) 36px;
       background: var(--bg);
+      content-visibility: auto;
+      contain-intrinsic-size: auto 96px;
     }
     .foot-bar {
       max-width: 1360px;
@@ -1494,15 +1526,334 @@
         scroll-behavior: auto !important;
       }
     }
+
+    /* ================= CAMPAIGN HERO & COLLECTION SHEET (INLINED) ================= */
+    .campaign {
+      position: relative;
+      background: var(--bg);
+    }
+    .campaign.has-scroll::after {
+      content: "";
+      display: block;
+      height: 32svh;
+    }
+    .campaign-stage {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(230px, 1fr) minmax(0, 1.7fr) minmax(190px, .8fr);
+      grid-template-areas: "copy figure items";
+      align-items: center;
+      gap: clamp(18px, 3vw, 54px);
+      min-height: max(690px, 100svh);
+      padding: 76px clamp(24px, 6vw, 100px) 40px;
+      overflow: hidden;
+      isolation: isolate;
+      background: radial-gradient(ellipse at 50% 38%, #394451, var(--surface) 44%, var(--bg) 78%);
+    }
+    .campaign.has-scroll .campaign-stage {
+      position: sticky;
+      top: 0;
+    }
+    .campaign-light {
+      position: absolute;
+      inset: 0;
+      z-index: -2;
+      opacity: .26;
+      pointer-events: none;
+      background: radial-gradient(ellipse at 52% 40%, #a47d22, #463612 37%, transparent 69%);
+    }
+    .campaign-glint {
+      position: absolute;
+      inset: -10%;
+      z-index: -1;
+      pointer-events: none;
+      opacity: 0;
+      background: linear-gradient(115deg, transparent 28%, #f3f5f82a 48%, transparent 63%);
+    }
+    .campaign-copy { grid-area: copy; }
+    .campaign-title {
+      margin: 0;
+      font-size: clamp(3.7rem, 7vw, 6rem);
+      line-height: .9;
+      font-weight: 650;
+      letter-spacing: -.04em;
+    }
+    .campaign-title span {
+      display: block;
+      color: var(--signal);
+    }
+    .campaign-copy p {
+      max-width: 28ch;
+      color: var(--ink-secondary);
+      margin: 18px 0 22px;
+      font-size: .95rem;
+    }
+    .campaign-buy {
+      display: inline-flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .campaign-actions {
+      display: flex;
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 7px;
+    }
+    .campaign-replay {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      min-height: 40px;
+      padding: 0 2px;
+      background: none;
+      border: 0;
+      color: var(--ink-secondary);
+      font-size: .82rem;
+      cursor: pointer;
+    }
+    .campaign-replay[hidden] { display: none; }
+    .campaign-replay.is-pending { visibility: hidden; pointer-events: none; }
+    .campaign-replay:hover { color: var(--signal); }
+    .campaign-figure {
+      grid-area: figure;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: end;
+      min-width: 0;
+      margin: 0;
+      z-index: -1;
+    }
+    .campaign-figure::after {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      bottom: 1.5%;
+      width: 66%;
+      height: 7%;
+      background: radial-gradient(ellipse, #000a 0%, transparent 70%);
+    }
+    .campaign-pose {
+      max-width: 100%;
+      min-width: 0;
+      transform-origin: 50% 96%;
+      perspective: 850px;
+    }
+    .campaign-pose picture { display: contents; }
+    .campaign-orbit {
+      position: absolute;
+      inset: auto 0 0;
+      width: 100%;
+      height: 59%;
+      pointer-events: none;
+    }
+    .campaign-figure img {
+      display: block;
+      width: auto;
+      max-width: 100%;
+      height: clamp(545px, 82svh, 850px);
+      object-fit: contain;
+      object-position: center bottom;
+    }
+    .campaign-items {
+      grid-area: items;
+      list-style: none;
+      border-top: 1px solid var(--hairline-strong);
+    }
+    .campaign-items button {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 58px;
+      width: 100%;
+      padding: 8px 0;
+      border: 0;
+      border-bottom: 1px solid var(--hairline-strong);
+      background: none;
+      text-align: left;
+      color: var(--ink);
+      cursor: pointer;
+    }
+    .campaign-items button:hover { color: var(--signal); }
+    .campaign-items img {
+      width: 42px;
+      height: 42px;
+      object-fit: contain;
+    }
+    .campaign-intro[hidden] { display: none; }
+    .campaign-intro {
+      position: fixed;
+      inset: 0;
+      z-index: 850;
+      display: grid;
+      place-items: center;
+      pointer-events: none;
+    }
+    .campaign-intro-panel {
+      position: absolute;
+      inset: 0 0 49.9%;
+      background: var(--ink);
+    }
+    .campaign-intro-panel + .campaign-intro-panel { inset: 49.9% 0 0; }
+    .campaign-intro img {
+      position: relative;
+      width: clamp(88px, 13vw, 148px);
+      height: auto;
+    }
+    .collection-sheet {
+      position: relative;
+      z-index: 1;
+      padding: clamp(38px, 6vw, 90px) clamp(24px, 6vw, 100px);
+      color: var(--bg);
+      background: var(--ink);
+    }
+    .campaign.has-scroll + .campaign-intro + .collection-sheet {
+      margin-top: -19svh;
+      border-radius: 22px 22px 0 0;
+    }
+    .collection-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 18px 32px;
+    }
+    .collection-sheet h2 {
+      font-size: clamp(2.5rem, 5vw, 5rem);
+      font-weight: 600;
+      letter-spacing: -.04em;
+      line-height: .95;
+    }
+    .collection-links { display: flex; flex-wrap: wrap; gap: 12px 22px; }
+    .collection-links a { text-decoration-color: #626d7c; }
+    .collection-links a:focus-visible { outline-color: #29394a; }
+    .collection-products {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      margin-top: clamp(20px, 4vw, 42px);
+      border-top: 1px solid #bcc1c8;
+      border-bottom: 1px solid #bcc1c8;
+      list-style: none;
+    }
+    .collection-products li + li { border-left: 1px solid #bcc1c8; }
+    .collection-products button {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: start;
+      gap: 6px 10px;
+      width: 100%;
+      padding: clamp(10px, 2vw, 22px);
+      border: 0;
+      background: transparent;
+      text-align: left;
+      color: inherit;
+      cursor: pointer;
+    }
+    .collection-products button:hover { background: #e9edf1; }
+    .collection-products button:focus-visible { outline-color: #29394a; outline-offset: -2px; }
+    .collection-products img {
+      grid-column: 1 / -1;
+      width: 100%;
+      height: clamp(130px, 23vw, 280px);
+      object-fit: contain;
+    }
+    .collection-price { color: #434e5d; }
+    .pack-dialog {
+      max-width: min(440px, calc(100% - 28px));
+      width: 100%;
+      max-height: calc(100% - 28px);
+      margin: auto;
+      padding: clamp(20px, 5vw, 32px);
+      overflow: auto;
+      color: var(--ink);
+      background: var(--surface);
+      border: 1px solid var(--hairline-strong);
+      border-radius: 16px;
+    }
+    .pack-dialog::backdrop { background: #090b0ed6; }
+    .pack-dialog header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+    .pack-dialog h2 { font-size: 1.65rem; letter-spacing: -.03em; }
+    .pack-dialog label {
+      display: grid;
+      gap: 6px;
+      margin-bottom: 15px;
+      color: var(--ink);
+      font-size: .9rem;
+    }
+    .pack-dialog select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid var(--hairline-strong);
+      border-radius: 6px;
+      color: var(--ink);
+      background: var(--bg-room);
+      font: inherit;
+    }
+    .pack-dialog .btn { width: 100%; margin-top: 8px; }
+    @media (max-width: 905px) {
+      .campaign-stage {
+        grid-template-columns: minmax(200px, 1fr) minmax(0, 1.65fr);
+        grid-template-areas: "copy figure" "items figure";
+        align-content: center;
+      }
+      .campaign-items { max-width: 280px; }
+    }
+    @media (max-width: 620px) {
+      .campaign-stage {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-areas: "figure" "copy" "items";
+        min-height: 0;
+        gap: 14px;
+        padding: 68px 20px 22px;
+      }
+      .collection-products { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .collection-products li:nth-child(odd) { border-left: 0; }
+      .collection-products li:nth-child(n + 3) { border-top: 1px solid #bcc1c8; }
+      .campaign-figure img { height: clamp(270px, 46svh, 490px); }
+      .campaign-title { font-size: clamp(2.8rem, 10vw, 4rem); }
+      .campaign-title span { display: inline; }
+      .campaign-copy p { max-width: none; margin: 9px 0 13px; }
+      .campaign-actions {
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        column-gap: 14px;
+      }
+      .campaign-items {
+        width: 100%;
+        max-width: none;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+      .campaign-items button {
+        flex-direction: column;
+        justify-content: start;
+        gap: 4px;
+        border-bottom: 0;
+        padding: 8px 3px 3px;
+        text-align: center;
+        font-size: .72rem;
+      }
+      .campaign-items img { width: 36px; height: 32px; }
+    }
+    .campaign-items .has-garment-light,
+    .collection-products .has-garment-light {
+      background-image: var(--garment-light);
+    }
   </style>
-  <link rel="stylesheet" href="assets/campaign.css?v=3">
 </head>
 <body>
   <a class="skip-link" href="#main" data-i18n="skip">Skip to content</a>
 
   <header class="topbar" id="topbar">
     <a class="brand" href="#inicio" aria-label="Progress Digital - Demo Store">
-      <img src="assets/logo.webp" alt="" width="28" height="28">
+      <img src="assets/logo-sm.webp" alt="" width="28" height="28" decoding="async">
       <span class="brand-wordmark">
         <span class="brand-name">Progress Digital</span>
         <span class="brand-subtitle">Demo Store</span>
@@ -1545,9 +1896,9 @@
           <p data-i18n="packSummary">Pulse Alpine in Signal Yellow, Obsidian Cargo and Signal Ridge.</p>
           <div class="campaign-actions">
             <button type="button" class="btn btn-primary campaign-buy" id="openPack">
-              <span data-i18n="choosePack">Choose pack</span><span class="num" data-pack-price></span>
+              <span data-i18n="choosePack">Choose pack</span><span class="num" data-pack-price>$495</span>
             </button>
-            <button type="button" class="campaign-replay" id="replayPackMotion" hidden>
+            <button type="button" class="campaign-replay is-pending" id="replayPackMotion">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
                 <path d="M4 11a8 8 0 1 1 2 6m-2-6V5m0 6h6"/>
               </svg>
@@ -1557,16 +1908,24 @@
         </div>
         <figure class="campaign-figure">
           <div class="campaign-pose" id="packPose">
-            <img id="packFigure" src="assets/pack-signal.webp" width="900" height="1350" fetchpriority="high" decoding="async" data-i18n-alt="packImageAlt" alt="Obsidian mannequin wearing the yellow Pulse Alpine, black cargo pants and Signal Ridge sneakers">
+            <picture>
+              <source type="image/avif" srcset="assets/pack-signal-540.avif 540w, assets/pack-signal.avif 900w" sizes="(max-width: 620px) 265px, 560px">
+              <source type="image/webp" srcset="assets/pack-signal-540.webp 540w, assets/pack-signal.webp 900w" sizes="(max-width: 620px) 265px, 560px">
+              <img id="packFigure" src="assets/pack-signal.webp" width="900" height="1350" fetchpriority="high" loading="eager" decoding="sync" data-i18n-alt="packImageAlt" alt="Obsidian mannequin wearing the yellow Pulse Alpine, black cargo pants and Signal Ridge sneakers">
+            </picture>
           </div>
           <canvas class="campaign-orbit" id="packOrbit" aria-hidden="true" hidden></canvas>
         </figure>
-        <ul class="campaign-items" id="packPieces" data-i18n-label="packContents" aria-label="Pieces included in the pack"></ul>
+        <ul class="campaign-items" id="packPieces" data-i18n-label="packContents" aria-label="Pieces included in the pack">
+          <li><button type="button" data-pack-piece="pd-04" data-pack-color="signal"><img class="has-garment-light" src="assets/thumbs/pulse-windbreaker-signal.webp" alt="" width="42" height="42" decoding="async"><span>Pulse Alpine Shell</span></button></li>
+          <li><button type="button" data-pack-piece="pd-11"><img class="has-garment-light" src="assets/thumbs/obsidian-cargo.webp" alt="" width="42" height="42" decoding="async"><span>Obsidian Cargo</span></button></li>
+          <li><button type="button" data-pack-piece="sn-06"><img src="assets/thumbs/signal-ridge.webp" alt="" width="42" height="42" decoding="async"><span>Signal Ridge</span></button></li>
+        </ul>
       </div>
     </section>
     <div class="campaign-intro" id="campaignIntro" aria-hidden="true" hidden>
       <div class="campaign-intro-panel"></div><div class="campaign-intro-panel"></div>
-      <img src="assets/logo.webp" alt="" width="499" height="499">
+      <img src="assets/logo-sm.webp" alt="" width="160" height="160" decoding="async">
     </div>
     <section class="collection-sheet" aria-labelledby="collectionTitle">
       <div class="collection-header">
@@ -1586,7 +1945,7 @@
       <div class="room-floor" aria-hidden="true"></div>
 
       <div class="room-watermark" aria-hidden="true">
-        <img src="assets/logo.webp" alt="" width="32" height="32">
+        <img src="assets/logo-sm.webp" alt="" width="32" height="32" loading="lazy" decoding="async">
         <span>Progress Digital</span>
       </div>
 
@@ -1611,8 +1970,8 @@
             <div class="rail-controls">
               <button class="rail-nav" id="railPrev" type="button" data-i18n-label="prevGarment" aria-label="Previous garment">‹</button>
               <div class="rail-selection" aria-live="polite">
-                <strong id="railName"></strong>
-                <span class="rail-position num" id="railPosition"></span>
+                <strong id="railName">Liquid Cropped Puffer</strong>
+                <span class="rail-position num" id="railPosition">02 / 12</span>
               </div>
               <button class="rail-nav" id="railNext" type="button" data-i18n-label="nextGarment" aria-label="Next garment">›</button>
             </div>
@@ -1727,19 +2086,19 @@
           <p class="editorial-p" data-i18n="archCopy">Heavy 3D garment meshes take megabytes to download and flatten fabric texture. Progress Digital pairs transparent studio cutouts with perspective staging and a zero-dependency WebGL2 spiral.</p>
         </div>
 
-        <div class="scrubber-stage" id="scrubberStage" style="--split: 46%;">
+        <div class="scrubber-stage" id="scrubberStage">
           <div class="scrub-side scrub-studio">
             <span class="scrub-studio-note" data-i18n="scrubStudio">Final studio render</span>
-            <img src="assets/garments/vector-shell.webp" alt="Studio cutout garment">
+            <img src="assets/garments/vector-shell.webp" alt="Studio cutout garment" width="720" height="960" loading="lazy" decoding="async">
           </div>
-          <div class="scrub-side scrub-wire" aria-hidden="true">
+          <div class="scrub-side scrub-wire" id="scrubWire" aria-hidden="true">
             <div class="scrub-wire-inner">
               <span class="scrub-wire-note" data-i18n="scrubWire">2.5D spatial mask + perspective grid</span>
               <div class="scrub-wire-cross"></div>
-              <img src="assets/garments/vector-shell.webp" alt="">
+              <img src="assets/garments/vector-shell.webp" alt="" width="720" height="960" loading="lazy" decoding="async">
             </div>
           </div>
-          <div class="scrub-handle" aria-hidden="true"><div class="scrub-knob">&harr;</div></div>
+          <div class="scrub-handle" id="scrubHandle" aria-hidden="true"><div class="scrub-knob">&harr;</div></div>
           <input class="scrub-range-a11y" id="scrubRange" type="range" min="8" max="92" value="46" aria-label="Compare wireframe structure with studio cutout">
         </div>
 
@@ -1765,7 +2124,7 @@
       <div class="studio-inner">
         <div>
           <div class="studio-brand-row">
-            <img src="assets/logo.webp" alt="Progress Digital" width="32" height="32">
+            <img src="assets/logo-sm.webp" alt="Progress Digital" width="32" height="32" loading="lazy" decoding="async">
             <span>Progress Digital</span>
           </div>
           <h2 class="editorial-h2" id="studioHeading" data-i18n="studioTitle">Interactive flagships built to convert</h2>
@@ -1844,7 +2203,7 @@
   <footer>
     <div class="foot-bar">
       <div class="foot-left">
-        <img src="assets/logo.webp" alt="Progress Digital" width="22" height="22">
+        <img src="assets/logo-sm.webp" alt="Progress Digital" width="22" height="22" loading="lazy" decoding="async">
         <strong>Progress Digital</strong>
         <span>&middot;</span>
         <span data-i18n="footNote">Progress Digital - Demo Store is a fictional concept showcase built as a personal portfolio piece.</span>
@@ -1871,14 +2230,14 @@
       </header>
       <div id="packSizes"></div>
       <button class="btn btn-primary" type="submit">
-        <span data-i18n="addToBag">Add to bag</span> · <span class="num" data-pack-price></span>
+        <span data-i18n="addToBag">Add to bag</span> · <span class="num" data-pack-price>$495</span>
       </button>
     </form>
   </dialog>
 
-  <script src="assets/vendor/gsap-3.15.1.min.js"></script>
-  <script src="assets/vendor/scrolltrigger-3.15.1.min.js"></script>
-  <script>
+  <script defer src="assets/vendor/gsap-3.15.1.min.js"></script>
+  <script defer src="assets/vendor/scrolltrigger-3.15.1.min.js"></script>
+  <script type="module">
     /* =========================================================================
        CATALOG MANIFEST (Swap image paths & names here to load any new garments)
        ========================================================================= */
@@ -2413,6 +2772,10 @@
     const railPrev = document.getElementById('railPrev');
     const railNext = document.getElementById('railNext');
     const railSlots = [];
+    const railImgs = [];
+    const railDrops = [];
+    const railBrushes = [];
+    const railZ = [];
     let railCenters = [];
     let railIndex = -1;
     let railTarget = null;
@@ -2422,9 +2785,22 @@
     let lastRailScroll = 0;
     let railSettle;
     const sway = { angle: 0 };
+
+    function applyRailTransform(index) {
+      const img = railImgs[index];
+      if (!img) return;
+      const drop = railDrops[index] || 0;
+      const angle = sway.angle + (railBrushes[index] ? railBrushes[index].angle : 0);
+      img.style.transform = `translateY(${drop.toFixed(2)}px) rotateZ(${angle.toFixed(2)}deg)`;
+    }
+
+    function applyAllRailTransforms() {
+      for (let i = 0; i < railImgs.length; i++) applyRailTransform(i);
+    }
+
     const swayTo = window.gsap?.quickTo(sway, 'angle', {
       duration: .25, ease: 'power2.out',
-      onUpdate: () => apparelGrid.style.setProperty('--rail-sway', `${sway.angle}deg`)
+      onUpdate: applyAllRailTransforms
     });
 
     function measureRail() {
@@ -2442,8 +2818,16 @@
       railSlots.forEach((slot, index) => {
         const delta = index - position;
         const distance = Math.abs(delta);
-        slot.style.zIndex = String(1000 - Math.min(999, Math.round(distance * 100)));
-        slot.style.setProperty('--rail-drop', `${Math.min(10, distance * 3)}px`);
+        const z = 1000 - Math.min(999, Math.round(distance * 100));
+        if (railZ[index] !== z) {
+          railZ[index] = z;
+          slot.style.zIndex = String(z);
+        }
+        const drop = Math.min(10, distance * 3);
+        if (railDrops[index] !== drop) {
+          railDrops[index] = drop;
+          applyRailTransform(index);
+        }
       });
       if (railIndex === nearest) return;
 
@@ -2486,7 +2870,7 @@
     }
 
     function buildApparelRail() {
-      roomItems.apparel.forEach(item => {
+      roomItems.apparel.forEach((item, index) => {
         const slot = document.createElement('div');
         slot.className = 'rail-slot';
         slot.setAttribute('role', 'listitem');
@@ -2500,6 +2884,11 @@
         img.loading = 'lazy';
         img.decoding = 'async';
         img.src = lateralImage(item);
+        const brush = { angle: 0 };
+        railBrushes.push(brush);
+        railDrops.push(0);
+        railZ.push(-1);
+        railImgs.push(img);
         button.addEventListener('pointerenter', event => {
           if (!window.gsap || reducedMotion.matches || event.pointerType !== 'mouse'
               || event.buttons !== 0 || railTarget !== null) return;
@@ -2507,14 +2896,14 @@
           const bounds = button.getBoundingClientRect();
           const fromLeft = event.clientX < bounds.left + bounds.width / 2;
           const angle = fromLeft ? -6 : 6;
-          gsap.to(img, {
+          gsap.to(brush, {
             keyframes: [
-              { '--rail-brush': `${angle}deg`, duration: .18, ease: 'power2.out' },
-              { '--rail-brush': `${angle * -.28}deg`, duration: .23, ease: 'sine.inOut' },
-              { '--rail-brush': '0deg', duration: .32, ease: 'sine.out' }
+              { angle, duration: .18, ease: 'power2.out' },
+              { angle: angle * -.28, duration: .23, ease: 'sine.inOut' },
+              { angle: 0, duration: .32, ease: 'sine.out' }
             ],
             overwrite: true,
-            onComplete: () => img.style.removeProperty('--rail-brush')
+            onUpdate: () => applyRailTransform(index)
           });
         });
         button.append(img);
@@ -2549,14 +2938,13 @@
         clearTimeout(railSettle);
         swayTo?.tween.pause();
         sway.angle = 0;
-        apparelGrid.style.removeProperty('--rail-sway');
         if (window.gsap) {
-          railSlots.forEach(slot => {
-            const photo = slot.querySelector('img');
-            gsap.killTweensOf(photo);
-            photo.style.removeProperty('--rail-brush');
+          railBrushes.forEach(brush => {
+            gsap.killTweensOf(brush);
+            brush.angle = 0;
           });
         }
+        applyAllRailTransforms();
         resetInspectionMotion();
       });
       railPrev.addEventListener('click', () => moveRail((railTarget ?? railIndex) - 1));
@@ -2684,7 +3072,7 @@
           sp.type = 'button';
           sp.className = item.room === 'apparel' ? 'static-plate is-apparel' : 'static-plate';
           sp.innerHTML = `
-            <img src="${item.img}" alt="${item.name}" loading="lazy">
+            <img src="${item.img}" alt="${item.name}" width="${item.room === 'footwear' ? 800 : 720}" height="${item.room === 'footwear' ? 520 : 960}" loading="lazy" decoding="async">
             <div class="static-plate-row"><span>${item.code}</span><strong>$${item.price}</strong></div>
           `;
           sp.addEventListener('click', () => openPieceInRoom(idx, true));
@@ -2801,7 +3189,7 @@
 
     let glCtx = null;
     let spiralActive = false;
-    let spiralVisible = true;
+    let spiralVisible = false;
     let targetProg = 0, shownProg = 0;
     let targetDrag = 0, shownDrag = 0;
     let rafId = null, lastTs = 0;
@@ -2994,22 +3382,40 @@
         uTilt: gl.getUniformLocation(prog, 'uTilt')
       };
 
-      glCtx = { gl, prog, vao, count: idxs.length, textures, u };
+      glCtx = { gl, prog, vao, count: idxs.length, textures, u, projMat: null, aspect: 1, portrait: false };
 
       const logo = new Image();
-      logo.src = 'assets/logo.webp';
+      logo.decoding = 'async';
+      logo.src = 'assets/logo-sm.webp';
       let uploaded = false;
+      const uploadQueue = [];
+      let uploadScheduled = false;
+      const flushUpload = () => {
+        uploadScheduled = false;
+        const job = uploadQueue.shift();
+        if (!job) return;
+        const c = renderPlateTexture(job.spec, job.im, logo);
+        gl.bindTexture(gl.TEXTURE_2D, textures[job.i]);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, c);
+        gl.generateMipmap(gl.TEXTURE_2D);
+        kickSpiral();
+        if (uploadQueue.length) {
+          uploadScheduled = true;
+          requestAnimationFrame(flushUpload);
+        }
+      };
       const loadAll = () => {
         if (uploaded) return;
         uploaded = true;
         PLATES.forEach((spec, i) => {
           const im = new Image();
+          im.decoding = 'async';
           im.onload = () => {
-            const c = renderPlateTexture(spec, im, logo);
-            gl.bindTexture(gl.TEXTURE_2D, textures[i]);
-            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, c);
-            gl.generateMipmap(gl.TEXTURE_2D);
-            kickSpiral();
+            uploadQueue.push({ spec, im, i });
+            if (!uploadScheduled) {
+              uploadScheduled = true;
+              requestAnimationFrame(flushUpload);
+            }
           };
           im.src = CATALOG[spec.idx].img;
         });
@@ -3034,22 +3440,22 @@
       canvas.width = Math.round((canvas.clientWidth || innerWidth) * dpr);
       canvas.height = Math.round((canvas.clientHeight || innerHeight) * dpr);
       glCtx.gl.viewport(0, 0, canvas.width, canvas.height);
+      glCtx.aspect = (canvas.width || 1) / (canvas.height || 1);
+      glCtx.portrait = glCtx.aspect < 0.85;
+      glCtx.projMat = projMatrix(glCtx.portrait ? 0.78 : 0.72, glCtx.aspect, 0.1, 40);
       kickSpiral();
     }
 
     function drawSpiral(p, dAngle) {
       if (!glCtx) return;
-      const { gl, prog, vao, count, textures, u } = glCtx;
+      const { gl, prog, vao, count, textures, u, aspect, portrait, projMat } = glCtx;
       gl.clearColor(0, 0, 0, 0);
       gl.clear(gl.COLOR_BUFFER_BIT);
       gl.enable(gl.BLEND);
       gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
       gl.useProgram(prog);
       gl.bindVertexArray(vao);
-
-      const aspect = (canvas.width || 1) / (canvas.height || 1);
-      const portrait = aspect < 0.85;
-      gl.uniformMatrix4fv(u.uProj, false, projMatrix(portrait ? 0.78 : 0.72, aspect, 0.1, 40));
+      gl.uniformMatrix4fv(u.uProj, false, projMat);
 
       const rot = p * Math.PI * 2.4 + dAngle;
       const step = (Math.PI * 2) / PLATES.length;
@@ -3110,10 +3516,19 @@
     }
 
     function kickSpiral() {
-      if (spiralActive && spiralVisible && rafId === null) rafId = requestAnimationFrame(tick);
+      if (spiralActive && spiralVisible && glCtx && rafId === null) rafId = requestAnimationFrame(tick);
     }
     function onSpiralScroll() {
+      if (!glCtx) return;
       targetProg = spiralProgress();
+      kickSpiral();
+    }
+
+    function ensureSpiralReady() {
+      if (!spiralActive || glCtx) return;
+      initSpiralGL();
+      targetProg = spiralProgress();
+      shownProg = targetProg;
       kickSpiral();
     }
 
@@ -3121,6 +3536,7 @@
     let isDrag = false, sx = 0, sy = 0, moved = 0;
     canvas.addEventListener('pointerdown', e => {
       if (!spiralActive) return;
+      ensureSpiralReady();
       isDrag = true; moved = 0; sx = e.clientX; sy = e.clientY;
       canvas.classList.add('dragging');
       canvas.setPointerCapture(e.pointerId);
@@ -3154,34 +3570,51 @@
         if (rafId !== null) { cancelAnimationFrame(rafId); rafId = null; }
       } else if (!blocked && !spiralActive) {
         spiralActive = true;
-        initSpiralGL();
         addEventListener('scroll', onSpiralScroll, { passive: true });
-        targetProg = spiralProgress();
-        shownProg = targetProg;
-        kickSpiral();
+        if (spiralVisible || location.hash === '#lookbook') ensureSpiralReady();
       }
     }
     MQLS.forEach(m => m.addEventListener('change', applyGates));
 
+    // Warm up WebGL2 spiral textures only once user scrolls within 700px of #lookbook
+    const spiralWarmObs = new IntersectionObserver(entries => {
+      if (!entries[0].isIntersecting) return;
+      ensureSpiralReady();
+      spiralWarmObs.disconnect();
+    }, { rootMargin: '700px 0px' });
+    spiralWarmObs.observe(lookbookSec);
+
     new IntersectionObserver(entries => {
       spiralVisible = entries[0].isIntersecting;
-      if (spiralVisible) kickSpiral();
-      else if (rafId !== null) { cancelAnimationFrame(rafId); rafId = null; lastTs = 0; }
+      if (spiralVisible) {
+        ensureSpiralReady();
+        kickSpiral();
+      } else if (rafId !== null) { cancelAnimationFrame(rafId); rafId = null; lastTs = 0; }
     }, { threshold: 0.01 }).observe(lookbookSec);
 
     /* =========================================================================
        INTERACTIVE WIREFRAME SCRUBBER, NAV TRACKING & FORM
        ========================================================================= */
-    const scrubberStage = document.getElementById('scrubberStage');
+    const scrubWire = document.getElementById('scrubWire');
+    const scrubHandle = document.getElementById('scrubHandle');
     const scrubRange = document.getElementById('scrubRange');
     scrubRange.addEventListener('input', () => {
-      scrubberStage.style.setProperty('--split', `${scrubRange.value}%`);
+      const val = Number(scrubRange.value);
+      scrubWire.style.clipPath = `inset(0 ${100 - val}% 0 0)`;
+      scrubHandle.style.transform = `translateX(${val}%)`;
     });
 
     const topbar = document.getElementById('topbar');
-    addEventListener('scroll', () => topbar.classList.toggle('solid', scrollY > 40), { passive: true });
+    let topbarSolid = false;
+    addEventListener('scroll', () => {
+      const solid = scrollY > 40;
+      if (solid === topbarSolid) return;
+      topbarSolid = solid;
+      topbar.classList.toggle('solid', solid);
+    }, { passive: true });
 
     document.querySelector('[data-nav="lookbook"]').addEventListener('click', event => {
+      ensureSpiralReady();
       if (lookbookSec.getClientRects().length) return;
       event.preventDefault();
       document.getElementById('lookbook-static').scrollIntoView();
@@ -3239,7 +3672,8 @@
       const li = document.createElement('li');
       const button = document.createElement('button');
       button.type = 'button';
-      const photo = new Image(42, 42);
+      const photo = item.room === 'footwear' ? new Image(800, 520) : new Image(720, 960);
+      photo.decoding = 'async';
       if (showPrice) photo.loading = 'lazy';
       photo.src = garmentImage(item, piece.color);
       photo.alt = '';
@@ -3269,8 +3703,18 @@
       collection.append(...[...signalPack.pieces, { id: 'pd-12' }].map(piece => makeFeaturedProduct(piece, true)));
 
       signalPack.pieces.forEach(piece => {
-        const item = CATALOG.find(entry => entry.id === piece.id);
-        links.append(makeFeaturedProduct(piece));
+        const index = CATALOG.findIndex(entry => entry.id === piece.id);
+        const item = CATALOG[index];
+        const existingBtn = links.querySelector(`[data-pack-piece="${piece.id}"]`);
+        if (existingBtn) {
+          existingBtn.addEventListener('click', () => {
+            if (piece.color) selectApparelColor(item, piece.color);
+            openPieceInRoom(index, true);
+            document.getElementById('backToRoom').focus({ preventScroll: true });
+          });
+        } else {
+          links.append(makeFeaturedProduct(piece));
+        }
 
         const label = document.createElement('label');
         const size = document.createElement('select');
