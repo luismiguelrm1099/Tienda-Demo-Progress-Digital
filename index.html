@@ -3,20 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PD Archive | Progress Digital</title>
-  <meta name="description" content="Interactive 3D spiral lookbook and full-bleed spatial streetwear showroom engineered by Progress Digital.">
+  <title>Progress Digital - Demo Store</title>
+  <meta name="description" content="Explore Pack Signal, the Apparel Rail and the Footwear Wall by Progress Digital.">
   <meta name="theme-color" content="#0B0D10">
   <!-- DEPLOY STEP: Replace og:url and og:image with the live Coolify HTTPS domain -->
-  <meta property="og:title" content="PD Archive | Progress Digital">
-  <meta property="og:description" content="Full-bleed spatial streetwear showroom and WebGL2 spiral lookbook crafted by Progress Digital.">
+  <meta property="og:title" content="Progress Digital - Demo Store">
+  <meta property="og:description" content="Pack Signal, the Apparel Rail and the Footwear Wall by Progress Digital.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://example.com/">
   <meta property="og:image" content="https://example.com/assets/logo.webp">
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230B0D10'/%3E%3Cpath d='M18 45V21c0-4 3-7 7-7h10c5 0 9 4 9 9s-4 9-9 9h-8' fill='none' stroke='%2318C8F0' stroke-width='5' stroke-linecap='round'/%3E%3Cpath d='M46 19v24c0 4-3 7-7 7H29c-5 0-9-4-9-9' fill='none' stroke='%23F0F3F7' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="icon" type="image/webp" href="assets/logo.webp">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
+    @font-face {
+      font-family: Michroma;
+      src: url('assets/fonts/michroma-latin-400.woff2') format('woff2');
+      font-weight: 400;
+      font-display: swap;
+    }
+
     :root {
       /* Single cool-obsidian neutral ramp tinted softly toward steel/slate */
       --bg: #0B0D10;
@@ -129,28 +136,22 @@
       object-fit: contain;
       display: block;
     }
+    .brand img { flex: 0 0 auto; }
+    .brand-wordmark { display: grid; gap: 4px; white-space: nowrap; }
     .brand-name {
-      font-size: 0.92rem;
+      font-family: Michroma, var(--font-sans);
+      font-size: clamp(.68rem, 1.05vw, .91rem);
+      font-weight: 400;
+      line-height: 1.1;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+    .brand-subtitle {
+      color: var(--ink-secondary);
+      font-size: .62rem;
       font-weight: 500;
-      letter-spacing: -0.02em;
-      white-space: nowrap;
-    }
-    .brand-by {
-      font-size: 0.78rem;
-      color: var(--ink-muted);
-      margin-left: 8px;
-      padding-left: 10px;
-      border-left: 1px solid var(--hairline);
-      white-space: nowrap;
-    }
-    .drop-dot {
-      display: inline-block;
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--signal);
-      margin-left: 3px;
-      vertical-align: middle;
+      line-height: 1;
+      letter-spacing: .19em;
     }
 
     .nav-links {
@@ -218,6 +219,7 @@
       gap: 8px;
       transition: border-color 180ms var(--ease-out), background 180ms var(--ease-out), transform 140ms var(--ease-out);
     }
+    .bag-icon { display: none; }
     .bag-trigger:active { transform: scale(0.97); }
     @media (hover: hover) and (pointer: fine) {
       .bag-trigger:hover { border-color: var(--hairline-strong); background: var(--surface-hover); }
@@ -299,7 +301,7 @@
     .spiral-backdrop-type span {
       font-family: var(--font-display);
       font-weight: 500;
-      font-size: clamp(5rem, 16vw, 15.5rem);
+      font-size: clamp(2rem, 11vw, 12rem);
       line-height: 0.92;
       letter-spacing: -0.055em;
       color: rgba(243, 245, 248, 0.04);
@@ -627,157 +629,234 @@
       display: none;
     }
 
-    /* Suspended Brushed-Steel Apparel Rail */
+    /* A single clothes rail, with flat studio photos angled around the hanger. */
     .rail-container {
-      width: 100%;
-      max-width: 1480px;
+      max-width: 1300px;
       margin: 0 auto;
-      padding: 36px 0 24px;
+      position: relative;
+      padding-top: 18px;
+      background: radial-gradient(ellipse at 50% 42%, #232B37, transparent 70%);
     }
     .steel-rail {
-      position: relative;
+      position: absolute;
+      inset: 34px 0 auto;
       height: 5px;
-      width: 100%;
-      background: linear-gradient(180deg, #A3B0C0 0%, #434E5D 55%, #1A2029 100%);
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.78);
+      background: linear-gradient(#A3B0C0, #434E5D 60%, #1A2029);
+      box-shadow: 0 8px 20px #0009;
+      pointer-events: none;
     }
-    .steel-rail::before, .steel-rail::after {
+    .apparel-grid {
+      --rail-card: clamp(168px, 33vw, 340px);
+      --rail-overlap: clamp(48px, 12.5vw, 165px);
+      position: relative;
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      overscroll-behavior-x: contain;
+      scrollbar-width: none;
+      padding: 2px max(0px, calc((100% - var(--rail-card)) / 2)) 8px;
+      cursor: grab;
+    }
+    .apparel-grid::-webkit-scrollbar { display: none; }
+    .apparel-grid:is(.is-dragging, .is-snapping) { scroll-snap-type: none; }
+    .apparel-grid.is-dragging { cursor: grabbing; }
+    .apparel-grid.is-dragging .rail-piece { cursor: grabbing; }
+    .rail-slot {
+      position: relative;
+      flex: 0 0 var(--rail-card);
+      min-width: 0;
+      scroll-snap-align: center;
+    }
+    .rail-slot + .rail-slot { margin-inline-start: calc(-1 * var(--rail-overlap)); }
+    .rail-piece {
+      position: relative;
+      display: block;
+      width: 100%;
+      padding: 0;
+      border: 0;
+      background: none;
+      perspective: 850px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .rail-piece:focus-visible { outline: none; }
+    .rail-piece:focus-visible::after {
       content: "";
       position: absolute;
-      top: -8px;
-      width: 4px;
-      height: 22px;
-      background: #4E5A6A;
+      inset: auto calc(50% - 17px) 0;
+      height: 3px;
+      background: var(--signal);
+      border-radius: 2px;
     }
-    .steel-rail::before { left: 0; }
-    .steel-rail::after { right: 0; }
-
-    .apparel-grid {
-      display: grid;
-      grid-template-columns: repeat(6, minmax(0, 1fr));
-      gap: clamp(8px, 1.4vw, 20px);
-      margin-top: -22px;
-      padding: 0 clamp(8px, 2vw, 28px);
-      align-items: start;
-    }
-
-    @media (hover: hover) and (pointer: fine) {
-      .apparel-grid:has(.piece-btn:hover) .piece-btn:not(:hover),
-      .footwear-rack:has(.piece-btn:hover) .piece-btn:not(:hover) {
-        opacity: 0.44;
-      }
-    }
-
-    .piece-btn {
-      position: relative;
-      appearance: none;
-      border: 1px solid transparent;
-      background: transparent;
-      padding: 6px 6px 14px;
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      transition: opacity 220ms var(--ease-out), transform 240ms var(--ease-out), border-color 180ms var(--ease-out), background 180ms var(--ease-out);
-      transform-origin: top center;
-    }
-    .piece-btn:active { transform: scale(0.98); }
-    @media (hover: hover) and (pointer: fine) {
-      .piece-btn:hover {
-        border-color: rgba(24, 200, 240, 0.58);
-        background: rgba(24, 200, 240, 0.03);
-        transform: translateY(-4px);
-        z-index: 8;
-      }
-    }
-    .piece-btn:focus-visible {
-      border-color: var(--accent);
-      background: rgba(24, 200, 240, 0.04);
-      z-index: 8;
-    }
-
-    .piece-btn img {
+    .rail-piece img {
+      display: block;
       width: 100%;
-      max-width: 240px;
+      height: auto;
       aspect-ratio: 3 / 4;
       object-fit: contain;
-      display: block;
-      filter: drop-shadow(0 28px 30px rgba(0, 0, 0, 0.8));
       pointer-events: none;
+      transform-origin: 50% 4%;
+      transform: translateY(var(--rail-drop, 0px)) rotateZ(var(--rail-sway, 0deg));
+      filter: drop-shadow(10px 22px 14px #0009);
     }
-    .piece-btn.sneaker-piece img {
-      max-width: 290px;
-      aspect-ratio: 800 / 520;
-      filter: drop-shadow(0 22px 20px rgba(0, 0, 0, 0.86));
+    .rail-controls {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 12px;
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 10px 0 4px;
     }
+    .rail-nav {
+      width: 44px;
+      height: 44px;
+      border: 1px solid var(--hairline-strong);
+      border-radius: 50%;
+      background: var(--surface);
+      color: var(--ink);
+      font-size: 1.25rem;
+      cursor: pointer;
+    }
+    .rail-nav:disabled { opacity: .35; cursor: default; }
+    .rail-selection { text-align: center; min-width: 0; }
+    .rail-selection strong { display: block; font-weight: 500; }
+    .rail-position { color: var(--ink-secondary); font: .72rem var(--font-mono); }
+    .rail-hint { color: var(--ink-secondary); font-size: .78rem; text-align: center; margin-top: 6px; }
+    .showroom-wrap:has(#viewApparel:not(.hidden)) .room-readout { display: none; }
 
-    /* Architectural Reticle Tag (quiet, razor sharp) */
-    .piece-tag {
+    .inspect-colors {
       position: absolute;
-      top: -22px;
-      left: -1px;
-      font-family: var(--font-mono);
-      font-size: 0.66rem;
-      font-weight: 500;
-      padding: 2px 7px;
-      background: var(--accent);
-      color: var(--bg);
-      opacity: 0;
-      transform: translateY(4px);
-      transition: opacity 180ms var(--ease-out), transform 180ms var(--ease-out);
-      pointer-events: none;
+      top: 50%;
+      right: 8px;
+      transform: translateY(calc(-100% - 28px));
+      display: grid;
+      gap: 5px;
+      z-index: 3;
     }
-    .piece-ticks::before, .piece-ticks::after {
+    .inspect-colors[hidden] { display: none; }
+    .color-swatch {
+      display: grid;
+      place-items: center;
+      width: 36px;
+      height: 36px;
+      padding: 0;
+      border: 1px solid transparent;
+      border-radius: 50%;
+      background: var(--bg-room);
+      cursor: pointer;
+    }
+    .color-swatch::before {
+      content: "";
+      width: 20px;
+      height: 20px;
+      background: var(--swatch);
+      border: 1px solid var(--hairline-strong);
+      border-radius: 50%;
+    }
+    .color-swatch[aria-pressed="true"] { border-color: var(--ink); }
+    .inspect-color-name { color: var(--ink-secondary); font-size: .82rem; }
+    .inspect-color-name[hidden] { display: none; }
+
+    .footwear-rack {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px 1px;
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: clamp(8px, 1.5vw, 20px);
+      border: 1px solid var(--hairline-strong);
+      border-radius: 18px;
+      background: var(--bg);
+    }
+    .sneaker-slot {
+      min-width: 0;
+      background: var(--bg-room);
+    }
+    .sneaker-piece {
+      position: relative;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      width: 100%;
+      height: 100%;
+      padding: 0;
+      color: var(--ink);
+      text-align: left;
+      background: transparent;
+      border: 0;
+      cursor: pointer;
+      isolation: isolate;
+    }
+    .sneaker-display {
+      position: relative;
+      display: grid;
+      align-items: end;
+      min-width: 0;
+      aspect-ratio: 1.2;
+      padding: 12px 6px 4px;
+      background: var(--surface) url("assets/sneaker-display.webp") center / 100% 100% no-repeat;
+    }
+    .sneaker-display::before {
       content: "";
       position: absolute;
-      width: 5px; height: 5px;
-      background: var(--accent);
-      opacity: 0;
-      transition: opacity 180ms var(--ease-out);
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 8%, var(--display-light), transparent 65%);
+      opacity: .17;
+      transition: opacity 240ms var(--ease-out);
       pointer-events: none;
     }
-    .piece-ticks::before { bottom: -3px; left: -3px; }
-    .piece-ticks::after { bottom: -3px; right: -3px; }
-
-    @media (hover: hover) and (pointer: fine) {
-      .piece-btn:hover .piece-tag { opacity: 1; transform: translateY(0); }
-      .piece-btn:hover .piece-ticks::before, .piece-btn:hover .piece-ticks::after { opacity: 1; }
+    .sneaker-display::after {
+      content: "";
+      position: absolute;
+      inset: auto 12% 9%;
+      height: 14%;
+      background: radial-gradient(ellipse, #000d, transparent 72%);
+      pointer-events: none;
     }
-    .piece-btn:focus-visible .piece-tag { opacity: 1; transform: translateY(0); }
-    .piece-btn:focus-visible .piece-ticks::before, .piece-btn:focus-visible .piece-ticks::after { opacity: 1; }
-
-    /* Two-Tier Architectural Sneaker Wall */
-    .footwear-rack {
+    .sneaker-slot:nth-child(odd) { --display-light: var(--accent); }
+    .sneaker-slot:nth-child(even) { --display-light: var(--signal); }
+    .sneaker-display img {
+      position: relative;
+      display: block;
       width: 100%;
-      max-width: 1060px;
-      margin: 0 auto;
-      padding: 18px clamp(16px, 3vw, 40px);
-      border-left: 1px solid var(--hairline-strong);
-      border-right: 1px solid var(--hairline-strong);
+      height: auto;
+      aspect-ratio: 800 / 520;
+      object-fit: contain;
+      z-index: 1;
+      filter: drop-shadow(3px 13px 7px #000b);
+      transform-origin: center bottom;
+      transition: transform 280ms var(--ease-out);
+      pointer-events: none;
     }
-    .shelf-row {
-      display: grid;
-      gap: clamp(16px, 2.4vw, 36px);
-      align-items: end;
-      padding: 8px 8px 12px;
+    .sneaker-piece:is(:hover, :focus-visible) .sneaker-display::before { opacity: .34; }
+    .sneaker-piece:is(:hover, :focus-visible) img { transform: translateY(-5px) scale(1.05); }
+    .sneaker-piece:focus-visible { outline-offset: -3px; z-index: 1; }
+    .sneaker-label {
+      display: flex;
+      gap: 3px 10px;
+      min-width: 0;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 9px 10px 12px;
+      border-top: 1px solid #58616d;
+      background: linear-gradient(180deg, #2b323d, #1b2029 22%, var(--bg-room));
+      font-size: .8rem;
     }
-    .shelf-row.row-top {
-      grid-template-columns: repeat(2, minmax(0, 320px));
-      justify-content: center;
-      margin-bottom: 28px;
+    .sneaker-label-price {
+      font: .72rem var(--font-mono);
+      color: var(--ink-secondary);
     }
-    .shelf-row.row-bottom {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-    .shelf-ledge {
-      grid-column: 1 / -1;
-      height: 4px;
-      margin-top: -10px;
-      background: linear-gradient(180deg, #98A6B8 0%, #394352 60%, #161B22 100%);
-      box-shadow: 0 12px 26px rgba(0, 0, 0, 0.85);
+    .showroom-wrap:has(#viewFootwear:not(.hidden)) .room-readout { display: none; }
+    @media (max-width: 720px) {
+      .footwear-rack {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px 1px;
+        padding: 8px;
+      }
+      .sneaker-label { padding: 7px 8px 9px; }
     }
 
-    /* ================= IN-ROOM CAMERA ZOOM INSPECTION VIEW (NOT A GENERIC MODAL!) ================= */
     .inspect-view {
       width: 100%;
       max-width: 1260px;
@@ -808,6 +887,17 @@
       transition: transform 200ms var(--ease-out);
       will-change: transform;
     }
+    .inspect-stage .inspect-side {
+      position: absolute;
+      inset: 50% auto auto 50%;
+      width: 100%;
+      height: min(100%, 460px);
+      transform: translate(-50%, -50%);
+      filter: none;
+      transition: none;
+      pointer-events: none;
+    }
+    .inspect-side[hidden] { display: none; }
     .inspect-arrow {
       position: absolute;
       top: 50%;
@@ -1355,14 +1445,7 @@
 
     /* ================= RESPONSIVE ================= */
     @media (max-width: 1040px) {
-      .nav-links, .brand-by { display: none; }
-      .apparel-grid {
-        display: flex;
-        overflow-x: auto;
-        scroll-snap-type: x mandatory;
-        padding-bottom: 14px;
-      }
-      .apparel-grid .piece-btn { flex: 0 0 190px; scroll-snap-align: center; }
+      .nav-links { display: none; }
       .inspect-view, .craft-top, .studio-inner { grid-template-columns: 1fr; }
       .ledger { grid-template-columns: 1fr; }
       .ledger-col + .ledger-col { padding-left: 0; border-left: 0; border-top: 1px solid var(--hairline); }
@@ -1379,25 +1462,29 @@
       .spiral-cta-row .btn { flex: 1; padding: 10px 12px; font-size: 0.8rem; }
       .showroom-wrap { padding: 76px 18px 28px; min-height: auto; }
       .room-watermark { display: none; }
-      .footwear-rack { padding: 12px 0; border-left: 0; border-right: 0; }
-      .shelf-row.row-top, .shelf-row.row-bottom {
-        display: flex;
-        overflow-x: auto;
-        scroll-snap-type: x mandatory;
-        justify-content: flex-start;
-        gap: 14px;
-        padding: 10px 4px 12px;
-        margin-bottom: 22px;
-        border-bottom: 3px solid #434E5D;
-        box-shadow: 0 12px 20px -10px rgba(0, 0, 0, 0.85);
-      }
-      .shelf-row .piece-btn { flex: 0 0 210px; scroll-snap-align: center; }
-      .shelf-ledge { display: none; }
+      .room-stage:has(#viewApparel:not(.hidden)) { min-height: 0; }
       .inspect-stage { min-height: 260px; padding: 8px 36px; }
       .inspect-stage img { max-height: 270px; }
       .scrub-wire-note, .scrub-studio-note { top: 12px; font-size: 0.64rem; }
       .scrub-wire-note { left: 12px; }
       .scrub-studio-note { right: 12px; }
+    }
+    @media (max-width: 380px) {
+      .topbar { gap: 8px; padding-inline: 12px; }
+      .top-right, .brand { gap: 6px; }
+      .brand img { width: 23px; height: 23px; }
+      .brand-name { font-size: .57rem; letter-spacing: .12em; }
+      .lang-switch { padding-inline: 3px; }
+      .lang-switch button { padding-inline: 5px; }
+      .bag-trigger { padding-inline: 7px; gap: 4px; }
+      .bag-trigger .bag-label {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        clip-path: inset(50%);
+        overflow: hidden;
+      }
+      .bag-icon { display: block; }
     }
     @media (pointer: coarse) {
       .btn, .bag-trigger, .room-tab, .size-opt { min-height: 44px; }
@@ -1411,15 +1498,18 @@
       }
     }
   </style>
+  <link rel="stylesheet" href="assets/campaign.css">
 </head>
 <body>
   <a class="skip-link" href="#main" data-i18n="skip">Skip to content</a>
 
   <header class="topbar" id="topbar">
-    <a class="brand" href="#lookbook">
-      <img src="assets/logo.webp" alt="Progress Digital" width="28" height="28">
-      <span class="brand-name">PD Archive <span class="drop-dot" aria-hidden="true"></span></span>
-      <span class="brand-by" data-i18n="byPd">Progress Digital</span>
+    <a class="brand" href="#inicio" aria-label="Progress Digital - Demo Store">
+      <img src="assets/logo.webp" alt="" width="28" height="28">
+      <span class="brand-wordmark">
+        <span class="brand-name">Progress Digital</span>
+        <span class="brand-subtitle">Demo Store</span>
+      </span>
     </a>
 
     <nav class="nav-links" aria-label="Primary navigation">
@@ -1436,7 +1526,10 @@
         <button type="button" id="btnEs" aria-pressed="false">ES</button>
       </div>
       <button class="bag-trigger" id="openBagBtn" type="button">
-        <span data-i18n="bag">Bag</span>
+        <span class="bag-label" data-i18n="bag">Bag</span>
+        <svg class="bag-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+          <path d="M5 8h14l1 13H4L5 8Z M9 10V6a3 3 0 0 1 6 0v4"/>
+        </svg>
         <span class="bag-num num" id="bagCount">0</span>
       </button>
     </div>
@@ -1444,10 +1537,143 @@
 
   <main id="main" tabindex="-1">
 
-    <!-- ================= 1. FULL-BLEED 3D SPIRAL LOOKBOOK ================= -->
+    <!-- Pack Signal campaign -->
+    <section class="campaign" id="inicio" aria-labelledby="campaignTitle">
+      <div class="campaign-stage">
+        <div class="campaign-light" aria-hidden="true"></div>
+        <div class="campaign-glint" aria-hidden="true"></div>
+        <div class="campaign-copy">
+          <h1 class="campaign-title" id="campaignTitle">Pack <span>Signal</span></h1>
+          <p data-i18n="packSummary">Pulse Alpine in Signal Yellow, Obsidian Cargo and Signal Ridge.</p>
+          <button type="button" class="btn btn-primary campaign-buy" id="openPack">
+            <span data-i18n="choosePack">Choose pack</span><span class="num" data-pack-price></span>
+          </button>
+        </div>
+        <figure class="campaign-figure">
+          <img id="packFigure" src="assets/pack-signal.webp" width="900" height="1350" fetchpriority="high" decoding="async" data-i18n-alt="packImageAlt" alt="Obsidian mannequin wearing the yellow Pulse Alpine, black cargo pants and Signal Ridge sneakers">
+        </figure>
+        <ul class="campaign-items" id="packPieces" data-i18n-label="packContents" aria-label="Pieces included in the pack"></ul>
+      </div>
+    </section>
+    <div class="campaign-intro" id="campaignIntro" aria-hidden="true" hidden>
+      <div class="campaign-intro-panel"></div><div class="campaign-intro-panel"></div>
+      <img src="assets/logo.webp" alt="" width="499" height="499">
+    </div>
+    <section class="collection-sheet" aria-labelledby="collectionTitle">
+      <div class="collection-header">
+        <h2 id="collectionTitle" data-i18n="collectionHeading">The collection</h2>
+        <nav class="collection-links" data-i18n-label="collectionHeading" aria-label="The collection">
+          <a href="#showroom" data-collection-room="apparel" data-i18n="tabApparel">Apparel</a>
+          <a href="#showroom" data-collection-room="footwear" data-i18n="tabFootwear">Footwear</a>
+        </nav>
+      </div>
+      <ul class="collection-products" id="collectionProducts"></ul>
+    </section>
+
+    <!-- ================= 2. FULL-BLEED SPATIAL VIRTUAL SHOWROOM ================= -->
+    <section class="showroom-wrap" id="showroom" aria-labelledby="showroomHeading">
+      <div class="room-wall-grid" aria-hidden="true"></div>
+      <div class="room-spotlight" aria-hidden="true"></div>
+      <div class="room-floor" aria-hidden="true"></div>
+
+      <div class="room-watermark" aria-hidden="true">
+        <img src="assets/logo.webp" alt="" width="32" height="32">
+        <span>Progress Digital</span>
+      </div>
+
+      <div class="room-header">
+        <div class="room-title-group">
+          <h2 class="room-heading" id="showroomHeading" data-i18n="roomHeadingApparel">Apparel rail</h2>
+          <span class="room-count num" id="roomCount">12 pieces</span>
+        </div>
+
+        <div class="room-tabs" role="tablist" aria-label="Showroom rooms">
+          <button class="room-tab" id="tabApparel" type="button" role="tab" aria-selected="true" data-i18n="tabApparel">Apparel</button>
+          <button class="room-tab" id="tabFootwear" type="button" role="tab" aria-selected="false" data-i18n="tabFootwear">Footwear</button>
+        </div>
+      </div>
+
+      <div class="room-stage">
+        <!-- Apparel Rail View -->
+        <div class="room-view" id="viewApparel">
+          <div class="rail-container">
+            <div class="steel-rail" aria-hidden="true"></div>
+            <div class="apparel-grid" id="apparelGrid" role="list" aria-labelledby="showroomHeading"></div>
+            <div class="rail-controls">
+              <button class="rail-nav" id="railPrev" type="button" data-i18n-label="prevGarment" aria-label="Previous garment">‹</button>
+              <div class="rail-selection" aria-live="polite">
+                <strong id="railName"></strong>
+                <span class="rail-position num" id="railPosition"></span>
+              </div>
+              <button class="rail-nav" id="railNext" type="button" data-i18n-label="nextGarment" aria-label="Next garment">›</button>
+            </div>
+            <p class="rail-hint" data-i18n="railHint">Swipe or drag the rail. Select a garment to see its details.</p>
+          </div>
+        </div>
+
+        <!-- Footwear Wall View -->
+        <div class="room-view hidden" id="viewFootwear">
+          <div class="footwear-rack" id="footwearRack" role="list" aria-labelledby="showroomHeading"></div>
+        </div>
+
+        <!-- In-Room Camera Zoom Inspection View -->
+        <div class="room-view hidden" id="viewInspect" aria-live="polite">
+          <div class="inspect-view">
+            <div class="inspect-stage" id="inspectStage">
+              <button class="inspect-arrow prev" id="prevPiece" type="button" aria-label="Previous piece">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 18l-6-6 6-6"/></svg>
+              </button>
+              <img id="inspectImg" alt="">
+              <img id="inspectSide" class="inspect-side" alt="" aria-hidden="true" hidden>
+              <div id="inspectColors" class="inspect-colors" role="group" data-i18n-label="chooseColor" aria-label="Choose color" hidden></div>
+              <button class="inspect-arrow next" id="nextPiece" type="button" aria-label="Next piece">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 18l6-6-6-6"/></svg>
+              </button>
+            </div>
+
+            <div class="inspect-specs">
+              <button class="inspect-back-btn" id="backToRoom" type="button">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                <span data-i18n="backRail">Back to showroom</span>
+              </button>
+
+              <div class="inspect-code-row">
+                <strong id="inspectCode">PD-01</strong>
+                <span id="inspectPrice" class="num">$290</span>
+              </div>
+              <h3 class="inspect-title" id="inspectTitle">Vector Shell Jacket</h3>
+              <p class="inspect-desc" id="inspectDesc"></p>
+              <p class="inspect-color-name" id="inspectColorName" aria-live="polite" hidden></p>
+
+              <div class="spec-row-label" data-i18n="selectSize">Select size</div>
+              <div class="size-list" id="sizeList"></div>
+
+              <div class="inspect-buy-row">
+                <div class="qty-box">
+                  <button type="button" id="qtyDec" aria-label="Decrease quantity">-</button>
+                  <span id="qtyNum" class="num">1</span>
+                  <button type="button" id="qtyInc" aria-label="Increase quantity">+</button>
+                </div>
+                <button class="btn btn-primary" id="addBagBtn" type="button" style="flex:1;" data-i18n="addToBag">Add to bag</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="room-footer">
+        <div class="room-readout" id="roomReadout">
+          <strong data-i18n="hoverPrompt">Select any piece to zoom in</strong>
+          <span class="r-price num">$165 - $290</span>
+        </div>
+        <span class="room-hint" data-i18n="swapNote">Modular catalog ready for custom product photography</span>
+      </div>
+    </section>
+
+    <!-- WebGL2 lookbook -->
     <section class="spiral-hero" id="lookbook" aria-label="3D Spiral Lookbook">
       <div class="spiral-stage">
-        <div class="spiral-backdrop-type" aria-hidden="true"><span>PD Archive</span></div>
+        <div class="spiral-backdrop-type" aria-hidden="true"><span>Progress Digital</span></div>
         <canvas id="spiralCanvas" aria-hidden="true"></canvas>
 
         <div class="spiral-overlay">
@@ -1483,98 +1709,7 @@
       <div class="static-carousel" id="staticCarousel"></div>
     </section>
 
-    <!-- ================= 2. FULL-BLEED SPATIAL VIRTUAL SHOWROOM ================= -->
-    <section class="showroom-wrap" id="showroom" aria-labelledby="showroomHeading">
-      <div class="room-wall-grid" aria-hidden="true"></div>
-      <div class="room-spotlight" aria-hidden="true"></div>
-      <div class="room-floor" aria-hidden="true"></div>
-
-      <div class="room-watermark" aria-hidden="true">
-        <img src="assets/logo.webp" alt="" width="32" height="32">
-        <span>Progress Digital</span>
-      </div>
-
-      <div class="room-header">
-        <div class="room-title-group">
-          <h2 class="room-heading" id="showroomHeading" data-i18n="roomHeadingApparel">Apparel rail</h2>
-          <span class="room-count num" id="roomCount">6 pieces</span>
-        </div>
-
-        <div class="room-tabs" role="tablist" aria-label="Showroom rooms">
-          <button class="room-tab" id="tabApparel" type="button" role="tab" aria-selected="true" data-i18n="tabApparel">Apparel</button>
-          <button class="room-tab" id="tabFootwear" type="button" role="tab" aria-selected="false" data-i18n="tabFootwear">Footwear</button>
-        </div>
-      </div>
-
-      <div class="room-stage">
-        <!-- Apparel Rail View -->
-        <div class="room-view" id="viewApparel">
-          <div class="rail-container">
-            <div class="steel-rail" aria-hidden="true"></div>
-            <div class="apparel-grid" id="apparelGrid" role="list"></div>
-          </div>
-        </div>
-
-        <!-- Footwear Wall View -->
-        <div class="room-view hidden" id="viewFootwear">
-          <div class="footwear-rack">
-            <div class="shelf-row row-top" id="shelfTop" role="list"></div>
-            <div class="shelf-row row-bottom" id="shelfBottom" role="list"></div>
-          </div>
-        </div>
-
-        <!-- In-Room Camera Zoom Inspection View -->
-        <div class="room-view hidden" id="viewInspect" aria-live="polite">
-          <div class="inspect-view">
-            <div class="inspect-stage" id="inspectStage">
-              <button class="inspect-arrow prev" id="prevPiece" type="button" aria-label="Previous piece">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 18l-6-6 6-6"/></svg>
-              </button>
-              <img id="inspectImg" src="" alt="">
-              <button class="inspect-arrow next" id="nextPiece" type="button" aria-label="Next piece">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 18l6-6-6-6"/></svg>
-              </button>
-            </div>
-
-            <div class="inspect-specs">
-              <button class="inspect-back-btn" id="backToRoom" type="button">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-                <span data-i18n="backRail">Back to showroom</span>
-              </button>
-
-              <div class="inspect-code-row">
-                <strong id="inspectCode">PD-01</strong>
-                <span id="inspectPrice" class="num">$290</span>
-              </div>
-              <h3 class="inspect-title" id="inspectTitle">Vector Shell Jacket</h3>
-              <p class="inspect-desc" id="inspectDesc"></p>
-
-              <div class="spec-row-label" data-i18n="selectSize">Select size</div>
-              <div class="size-list" id="sizeList"></div>
-
-              <div class="inspect-buy-row">
-                <div class="qty-box">
-                  <button type="button" id="qtyDec" aria-label="Decrease quantity">-</button>
-                  <span id="qtyNum" class="num">1</span>
-                  <button type="button" id="qtyInc" aria-label="Increase quantity">+</button>
-                </div>
-                <button class="btn btn-primary" id="addBagBtn" type="button" style="flex:1;" data-i18n="addToBag">Add to bag</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="room-footer">
-        <div class="room-readout" id="roomReadout">
-          <strong data-i18n="hoverPrompt">Select any piece to zoom in</strong>
-          <span class="r-price num">$165 - $290</span>
-        </div>
-        <span class="room-hint" data-i18n="swapNote">Modular catalog ready for custom product photography</span>
-      </div>
-    </section>
-
-    <!-- ================= 3. OPEN EDITORIAL ARCHITECTURE & INTERACTIVE SCRUBBER ================= -->
+    <!-- Architecture and comparison -->
     <section class="craft-band" id="architecture" aria-labelledby="archHeading">
       <div class="craft-inner">
         <div class="craft-top">
@@ -1600,8 +1735,8 @@
 
         <div class="ledger">
           <div class="ledger-col">
-            <div class="ledger-val num">0.9 MB</div>
-            <p class="ledger-label" data-i18n="stat1">Complete site footprint including all 11 transparent WebP studio garments and WebGL2 code</p>
+            <div class="ledger-val num">47 WebP</div>
+            <p class="ledger-label" data-i18n="stat1">Transparent studio images for garments, color variants, and footwear</p>
           </div>
           <div class="ledger-col">
             <div class="ledger-val num">60 fps</div>
@@ -1624,7 +1759,7 @@
             <span>Progress Digital</span>
           </div>
           <h2 class="editorial-h2" id="studioHeading" data-i18n="studioTitle">Interactive flagships built to convert</h2>
-          <p class="editorial-p" style="margin-top:16px;" data-i18n="studioCopy">PD Archive is a portfolio concept built by Progress Digital. We design and engineer custom web showrooms, launches, and storefronts that feel tactile and stay fast on real phones.</p>
+          <p class="editorial-p" style="margin-top:16px;" data-i18n="studioCopy">Progress Digital - Demo Store is a portfolio concept. We design and engineer custom web showrooms, launches, and storefronts that feel tactile and stay fast on real phones.</p>
 
           <div class="faq-wrap">
             <details class="faq-row" open>
@@ -1702,19 +1837,35 @@
         <img src="assets/logo.webp" alt="Progress Digital" width="22" height="22">
         <strong>Progress Digital</strong>
         <span>&middot;</span>
-        <span data-i18n="footNote">PD Archive is a fictional concept showcase built as a personal portfolio piece.</span>
+        <span data-i18n="footNote">Progress Digital - Demo Store is a fictional concept showcase built as a personal portfolio piece.</span>
       </div>
       <div class="foot-right">
-        <a href="#lookbook" data-i18n="topLink">Back to top</a>
+        <a href="#inicio" data-i18n="topLink">Back to top</a>
         <a href="#studio" data-i18n="contactLink">Start a project</a>
       </div>
     </div>
   </footer>
 
+  <dialog class="pack-dialog" id="packDialog" aria-labelledby="packDialogTitle">
+    <form id="packForm">
+      <header>
+        <h2 id="packDialogTitle">Pack Signal</h2>
+        <button class="bag-del" id="closePack" type="button" data-i18n="closePack">Close</button>
+      </header>
+      <div id="packSizes"></div>
+      <button class="btn btn-primary" type="submit">
+        <span data-i18n="addToBag">Add to bag</span> · <span class="num" data-pack-price></span>
+      </button>
+    </form>
+  </dialog>
+
+  <script src="assets/vendor/gsap-3.15.1.min.js"></script>
+  <script src="assets/vendor/scrolltrigger-3.15.1.min.js"></script>
   <script>
     /* =========================================================================
        CATALOG MANIFEST (Swap image paths & names here to load any new garments)
        ========================================================================= */
+    const FOOTWEAR_SIZES = ['US 7', 'US 8', 'US 9', 'US 10', 'US 11', 'US 12'];
     const CATALOG = [
       {
         id: 'pd-01', code: 'PD-01', room: 'apparel', name: 'Vector Shell Jacket', price: 290,
@@ -1724,8 +1875,8 @@
       },
       {
         id: 'pd-02', code: 'PD-02', room: 'apparel', name: 'Liquid Cropped Puffer', price: 260,
-        descEn: 'Reflective metallic ripstop down jacket cut in a cropped architectural silhouette.',
-        descEs: 'Plumífero metálico reflectante en silueta corta arquitectónica con cuello alto.',
+        descEn: 'Reflective metallic ripstop down jacket with a cropped silhouette and a high collar.',
+        descEs: 'Plumífero metálico reflectante de silueta corta con cuello alto.',
         img: 'assets/garments/liquid-puffer.webp', sizes: ['XS', 'S', 'M', 'L', 'XL']
       },
       {
@@ -1736,8 +1887,8 @@
       },
       {
         id: 'pd-04', code: 'PD-04', room: 'apparel', name: 'Pulse Alpine Shell', price: 245,
-        descEn: 'Seam-sealed electric cyan and carbon windblock shell cut for high visibility after dark.',
-        descEs: 'Cortavientos sellado en cian eléctrico y carbón diseñado para alta visibilidad nocturna.',
+        descEn: 'Seam-sealed windblock shell with a contrasting carbon lower panel.',
+        descEs: 'Cortavientos de costuras selladas con panel inferior carbón en contraste.',
         img: 'assets/garments/pulse-windbreaker.webp', sizes: ['XS', 'S', 'M', 'L', 'XL']
       },
       {
@@ -1753,41 +1904,148 @@
         img: 'assets/garments/drift-kimono.webp', sizes: ['S', 'M', 'L', 'XL']
       },
       {
-        id: 'sn-02', code: 'SN-02', room: 'footwear', tier: 'top', name: 'Monolith High-Top', price: 220,
+        id: 'sn-02', code: 'SN-02', room: 'footwear', name: 'Monolith High-Top', price: 220,
         descEn: 'Bone-white matte leather high-top anchored by dual tactical ankle straps and split outsole.',
         descEs: 'Bota alta en piel mate tono hueso con doble correa táctica al tobillo y suela partida.',
-        img: 'assets/sneakers/monolith-high.webp', sizes: ['US 7', 'US 8', 'US 9', 'US 10', 'US 11', 'US 12']
+        img: 'assets/sneakers/monolith-high.webp', sizes: FOOTWEAR_SIZES
       },
       {
-        id: 'sn-03', code: 'SN-03', room: 'footwear', tier: 'top', name: 'Mercury Chrome Low', price: 195,
+        id: 'sn-03', code: 'SN-03', room: 'footwear', name: 'Mercury Chrome Low', price: 195,
         descEn: 'Liquid silver overlays bonded to a translucent ice-cyan sculpted runner sole.',
         descEs: 'Paneles en plata líquida montados sobre suela esculpida translúcida en cian glaciar.',
-        img: 'assets/sneakers/mercury-chrome.webp', sizes: ['US 7', 'US 8', 'US 9', 'US 10', 'US 11', 'US 12']
+        img: 'assets/sneakers/mercury-chrome.webp', sizes: FOOTWEAR_SIZES
       },
       {
-        id: 'sn-01', code: 'SN-01', room: 'footwear', tier: 'bottom', name: 'Aero Knit Runner', price: 165,
+        id: 'sn-01', code: 'SN-01', room: 'footwear', name: 'Aero Knit Runner', price: 165,
         descEn: 'Engineered obsidian knit upper with faceted matte midsole and translucent mint heel pod.',
         descEs: 'Tejido técnico obsidiana con mediasuela facetada mate y cápsula de talón translúcida.',
-        img: 'assets/sneakers/aero-knit.webp', sizes: ['US 7', 'US 8', 'US 9', 'US 10', 'US 11', 'US 12']
+        img: 'assets/sneakers/aero-knit.webp', sizes: FOOTWEAR_SIZES
       },
       {
-        id: 'sn-04', code: 'SN-04', room: 'footwear', tier: 'bottom', name: 'Flux Carbon Trainer', price: 185,
+        id: 'sn-04', code: 'SN-04', room: 'footwear', name: 'Flux Carbon Trainer', price: 185,
         descEn: 'Speed-laced carbon ripstop trainer resting on an electric cyan sculpted midsole.',
         descEs: 'Zapatilla de ripstop carbón con cordón rápido sobre mediasuela esculpida en cian eléctrico.',
-        img: 'assets/sneakers/flux-carbon.webp', sizes: ['US 7', 'US 8', 'US 9', 'US 10', 'US 11', 'US 12']
+        img: 'assets/sneakers/flux-carbon.webp', sizes: FOOTWEAR_SIZES
       },
       {
-        id: 'sn-05', code: 'SN-05', room: 'footwear', tier: 'bottom', name: 'Terrain Sole GTX', price: 210,
+        id: 'sn-05', code: 'SN-05', room: 'footwear', name: 'Terrain Sole GTX', price: 210,
         descEn: 'Weatherproof slate nubuck and ripstop trail silhouette built on deep carbon lugs.',
         descEs: 'Silueta urbana todo clima en nobuk pizarra impermeable sobre tacos profundos de carbón.',
-        img: 'assets/sneakers/terrain-gtx.webp', sizes: ['US 7', 'US 8', 'US 9', 'US 10', 'US 11', 'US 12']
+        img: 'assets/sneakers/terrain-gtx.webp', sizes: FOOTWEAR_SIZES
+      },
+      {
+        id: 'sn-06', code: 'SN-06', room: 'footwear', name: 'Signal Ridge', price: 205,
+        descEn: 'Industrial-yellow ripstop trail shoe with dark rubber lugs and a molded Progress Digital emblem.',
+        descEs: 'Tenis de trail en ripstop amarillo industrial, con tacos de goma oscura y emblema moldeado de Progress Digital.',
+        img: 'assets/sneakers/signal-ridge.webp', sizes: FOOTWEAR_SIZES
+      },
+      {
+        id: 'sn-07', code: 'SN-07', room: 'footwear', name: 'Current Knit', price: 190,
+        descEn: 'Progress cyan mesh runner with a sculpted obsidian heel cage and a lateral brand emblem.',
+        descEs: 'Tenis de malla en cian Progress con soporte de talón en obsidiana y emblema lateral.',
+        img: 'assets/sneakers/current-knit.webp', sizes: FOOTWEAR_SIZES
+      },
+      {
+        id: 'sn-08', code: 'SN-08', room: 'footwear', name: 'Frost Court', price: 180,
+        descEn: 'Frost-white leather court low with a slate suede toe and a stitched quarter emblem.',
+        descEs: 'Tenis bajo de cancha en piel blanco frío, con puntera de ante pizarra y emblema cosido.',
+        img: 'assets/sneakers/frost-court.webp', sizes: FOOTWEAR_SIZES
+      },
+      {
+        id: 'sn-09', code: 'SN-09', room: 'footwear', name: 'Relay Strap Mid', price: 225,
+        descEn: 'Obsidian ballistic nylon mid-top with an adjustable strap and industrial-yellow pull tabs.',
+        descEs: 'Tenis de caña media en nylon balístico obsidiana, con correa ajustable y tiradores amarillo industrial.',
+        img: 'assets/sneakers/relay-mid.webp', sizes: FOOTWEAR_SIZES
+      },
+      {
+        id: 'sn-10', code: 'SN-10', room: 'footwear', name: 'Slate Drift Runner', price: 210,
+        descEn: 'Layered steel-gray and slate tech runner with a segmented tread and cyan accents.',
+        descEs: 'Tenis técnico en capas de gris acero y pizarra, con suela segmentada y acentos cian.',
+        img: 'assets/sneakers/slate-drift.webp', sizes: FOOTWEAR_SIZES
+      },
+      {
+        id: 'pd-07', code: 'PD-07', room: 'apparel', name: 'Relay Utility Bomber', price: 235,
+        descEn: 'Cropped technical nylon bomber with ribbed cuffs and an angled sleeve pocket.',
+        descEs: 'Bómber corta de nylon técnico con puños acanalados y bolsillo inclinado en la manga.',
+        img: 'assets/garments/relay-bomber.webp', sizes: ['XS', 'S', 'M', 'L', 'XL']
+      },
+      {
+        id: 'pd-08', code: 'PD-08', room: 'apparel', name: 'Phase Heavyweight Hoodie', price: 175,
+        descEn: 'Heavyweight technical fleece hoodie with a structured hood and a kangaroo pocket.',
+        descEs: 'Sudadera de felpa técnica gruesa con capucha estructurada y bolsillo canguro.',
+        img: 'assets/garments/phase-hoodie.webp', sizes: ['XS', 'S', 'M', 'L', 'XL']
+      },
+      {
+        id: 'pd-09', code: 'PD-09', room: 'apparel', name: 'Orbit Storm Parka', price: 285,
+        descEn: 'Long technical storm parka with angular panels and a protective high hood.',
+        descEs: 'Parka técnica larga con paneles angulares y capucha alta para proteger del viento.',
+        img: 'assets/garments/orbit-parka.webp', sizes: ['XS', 'S', 'M', 'L', 'XL']
+      },
+      {
+        id: 'pd-10', code: 'PD-10', room: 'apparel', name: 'Grid Ripstop Overshirt', price: 185,
+        descEn: 'Ripstop utility overshirt with dark snaps and asymmetrical chest pockets.',
+        descEs: 'Sobrecamisa utilitaria de ripstop con broches oscuros y bolsillos asimétricos en el pecho.',
+        img: 'assets/garments/grid-overshirt.webp', sizes: ['XS', 'S', 'M', 'L', 'XL']
+      },
+      {
+        id: 'pd-11', code: 'PD-11', room: 'apparel', name: 'Obsidian Cargo', price: 145,
+        descEn: 'Black straight-leg ripstop cargo pants with angled thigh pockets and tapered cuffs.',
+        descEs: 'Pantalón cargo negro de ripstop, con bolsillos inclinados en los muslos y bajos estrechos.',
+        img: 'assets/garments/obsidian-cargo.webp', sizes: ['W28', 'W30', 'W32', 'W34', 'W36']
+      },
+      {
+        id: 'pd-12', code: 'PD-12', room: 'apparel', name: 'Slate Seam Jeans', price: 155,
+        descEn: 'Straight-leg washed denim jeans with angular seam panels and a low-profile pocket logo.',
+        descEs: 'Jeans rectos de mezclilla lavada con costuras angulares y el logo discreto en el bolsillo.',
+        img: 'assets/garments/slate-seam-jeans.webp', sizes: ['W28', 'W30', 'W32', 'W34', 'W36']
       }
     ];
 
+    const COLORS = {
+      obsidian: { hex: '#151920', en: 'Obsidian', es: 'Obsidiana' },
+      cyan: { hex: '#18C8F0', en: 'Progress Cyan', es: 'Cian Progress' },
+      signal: { hex: '#F4C430', en: 'Signal Yellow', es: 'Amarillo industrial' },
+      steel: { hex: '#99A3B2', en: 'Steel', es: 'Acero' },
+      slate: { hex: '#536070', en: 'Slate', es: 'Pizarra' },
+      frost: { hex: '#F3F5F8', en: 'Frost', es: 'Blanco frío' }
+    };
+    const COLORWAYS = {
+      'pd-01': ['obsidian', 'cyan'],
+      'pd-02': ['signal', 'obsidian'],
+      'pd-03': ['obsidian', 'steel'],
+      'pd-04': ['cyan', 'signal'],
+      'pd-05': ['obsidian', 'slate'],
+      'pd-06': ['obsidian', 'slate'],
+      'pd-07': ['slate'],
+      'pd-08': ['signal'],
+      'pd-09': ['obsidian'],
+      'pd-10': ['frost'],
+      'pd-11': ['obsidian'],
+      'pd-12': ['slate']
+    };
+    const selectedColors = new Map();
+    const roomItems = {
+      apparel: CATALOG.filter(item => item.room === 'apparel'),
+      footwear: CATALOG.filter(item => item.room === 'footwear')
+    };
+
+    function garmentImage(item, color) {
+      return !color || color === COLORWAYS[item.id][0]
+        ? item.img
+        : item.img.replace('.webp', `-${color}.webp`);
+    }
+
+    function lateralImage(item, color) {
+      return garmentImage(item, color).replace('.webp', '-side.webp');
+    }
+
     const COPY = {
       en: {
+        packSummary: 'Pulse Alpine in Signal Yellow, Obsidian Cargo and Signal Ridge.',
+        choosePack: 'Choose pack', closePack: 'Close', packContents: 'Pieces included in the pack',
+        packImageAlt: 'Obsidian mannequin wearing the yellow Pulse Alpine, black cargo pants and Signal Ridge sneakers',
+        collectionHeading: 'The collection',
         skip: 'Skip to content',
-        byPd: 'Progress Digital',
         navLookbook: 'Lookbook', navShowroom: 'Showroom', navArch: 'Architecture', navStudio: 'Studio',
         bag: 'Bag',
         heroTitle: 'Spatial streetwear, built without heavy 3D',
@@ -1802,6 +2060,8 @@
         tabFootwear: 'Footwear',
         backRail: 'Back to showroom',
         selectSize: 'Select size',
+        railHint: 'Swipe or drag the rail. Select a garment to see its details.',
+        prevGarment: 'Previous garment', nextGarment: 'Next garment', chooseColor: 'Choose color',
         addToBag: 'Add to bag',
         added: 'Added to bag',
         hoverPrompt: 'Select any piece to zoom in',
@@ -1810,11 +2070,11 @@
         archCopy: 'Heavy 3D garment meshes take megabytes to download and flatten fabric texture. Progress Digital pairs transparent studio cutouts with perspective staging and a zero-dependency WebGL2 spiral.',
         scrubStudio: 'Final studio render',
         scrubWire: '2.5D spatial mask + perspective grid',
-        stat1: 'Complete site footprint including all 11 transparent WebP studio garments and WebGL2 code',
+        stat1: 'Transparent studio images for garments, color variants, and footwear',
         stat2: 'Native curved-cylinder spiral shader with zero external JavaScript frameworks',
         stat3: 'Ready to connect directly to Shopify Storefront, Stripe Checkout, or custom inventory',
         studioTitle: 'Interactive flagships built to convert',
-        studioCopy: 'PD Archive is a portfolio concept built by Progress Digital. We design and engineer custom web showrooms, launches, and storefronts that feel tactile and stay fast on real phones.',
+        studioCopy: 'Progress Digital - Demo Store is a portfolio concept. We design and engineer custom web showrooms, launches, and storefronts that feel tactile and stay fast on real phones.',
         faq1Q: 'Can we swap in our own clothing or sneakers?',
         faq1A: 'Yes. The entire showroom runs on a clean image manifest. Drop in your own studio cutouts or product shoots and every room, zoom view, and spiral card updates automatically.',
         faq2Q: 'Does it connect to real payments and inventory?',
@@ -1838,7 +2098,7 @@
         subtotal: 'Subtotal',
         checkout: 'Simulate checkout',
         checkoutOk: 'Demo checkout confirmed. Connect Shopify or Stripe for live orders.',
-        footNote: 'PD Archive is a fictional concept showcase built as a personal portfolio piece.',
+        footNote: 'Progress Digital - Demo Store is a fictional concept showcase built as a personal portfolio piece.',
         topLink: 'Back to top',
         contactLink: 'Start a project',
         remove: 'Remove',
@@ -1846,8 +2106,11 @@
         silhouettes: 'silhouettes'
       },
       es: {
+        packSummary: 'Pulse Alpine en amarillo industrial, Obsidian Cargo y Signal Ridge.',
+        choosePack: 'Elegir pack', closePack: 'Cerrar', packContents: 'Prendas y calzado del pack',
+        packImageAlt: 'Maniquí obsidiana con la chaqueta Pulse Alpine amarilla, pantalón cargo negro y tenis Signal Ridge',
+        collectionHeading: 'La colección',
         skip: 'Ir al contenido',
-        byPd: 'Progress Digital',
         navLookbook: 'Lookbook', navShowroom: 'Showroom', navArch: 'Arquitectura', navStudio: 'Estudio',
         bag: 'Bolsa',
         heroTitle: 'Showroom urbano espacial, sin peso 3D',
@@ -1862,6 +2125,8 @@
         tabFootwear: 'Sneakers',
         backRail: 'Volver al showroom',
         selectSize: 'Elige talla',
+        railHint: 'Desliza o arrastra el perchero. Selecciona una prenda para ver sus detalles.',
+        prevGarment: 'Prenda anterior', nextGarment: 'Prenda siguiente', chooseColor: 'Elige color',
         addToBag: 'Añadir a la bolsa',
         added: 'Añadido a la bolsa',
         hoverPrompt: 'Selecciona cualquier pieza para acercar',
@@ -1870,11 +2135,11 @@
         archCopy: 'Las mallas 3D de ropa pesan megabytes y apagan la textura real de la tela. En Progress Digital combinamos recortes transparentes de estudio con perspectiva arquitectónica y una espiral WebGL2 sin librerías.',
         scrubStudio: 'Acabado final de estudio',
         scrubWire: 'Máscara espacial 2.5D + grilla en perspectiva',
-        stat1: 'Peso total del sitio incluyendo los 11 recortes WebP de estudio y el motor WebGL2',
+        stat1: 'Imágenes de estudio con transparencia para prendas, variantes y calzado',
         stat2: 'Shader nativo de cilindro curvo sin frameworks pesados de JavaScript',
         stat3: 'Listo para conectar directo con Shopify Storefront, Stripe Checkout o inventario propio',
         studioTitle: 'Tiendas insignia diseñadas para convertir',
-        studioCopy: 'PD Archive es una pieza conceptual de portafolio creada por Progress Digital. Diseñamos y programamos showrooms interactivos, lanzamientos y tiendas rápidas en móviles reales.',
+        studioCopy: 'Progress Digital - Demo Store es una pieza conceptual de portafolio. Diseñamos y programamos showrooms interactivos, lanzamientos y tiendas rápidas en móviles reales.',
         faq1Q: '¿Podemos cambiar estas prendas por nuestra propia ropa o sneakers?',
         faq1A: 'Sí. Todo el showroom se alimenta de un catálogo limpio de imágenes. Sustituyes las fotos recortadas y cada sala, vista de zoom y lámina de la espiral se actualiza al instante.',
         faq2Q: '¿Se conecta con pagos reales e inventario?',
@@ -1898,7 +2163,7 @@
         subtotal: 'Subtotal',
         checkout: 'Simular compra',
         checkoutOk: 'Compra demo confirmada. Conecta Shopify o Stripe para pedidos reales.',
-        footNote: 'PD Archive es un concepto ficticio creado como pieza personal de portafolio.',
+        footNote: 'Progress Digital - Demo Store es un concepto ficticio creado como pieza personal de portafolio.',
         topLink: 'Volver arriba',
         contactLink: 'Iniciar proyecto',
         remove: 'Quitar',
@@ -1925,6 +2190,8 @@
       document.getElementById('btnEs').setAttribute('aria-pressed', String(lang === 'es'));
       document.querySelectorAll('[data-i18n]').forEach(el => el.textContent = t(el.dataset.i18n));
       document.querySelectorAll('[data-i18n-ph]').forEach(el => el.placeholder = t(el.dataset.i18nPh));
+      document.querySelectorAll('[data-i18n-label]').forEach(el => el.setAttribute('aria-label', t(el.dataset.i18nLabel)));
+      document.querySelectorAll('[data-i18n-alt]').forEach(el => { el.alt = t(el.dataset.i18nAlt); });
       updateRoomHeader();
       renderBag();
       if (inspectedIdx >= 0) fillInspect(CATALOG[inspectedIdx]);
@@ -1942,31 +2209,41 @@
     const tabFootwear = document.getElementById('tabFootwear');
     const roomHeading = document.getElementById('showroomHeading');
     const roomCount = document.getElementById('roomCount');
-    const roomReadout = document.getElementById('roomReadout');
+    const footwearRack = document.getElementById('footwearRack');
+    const footwearButtons = new Map();
+    let footwearEntrance;
 
     function updateRoomHeader() {
       const isApparel = currentRoom === 'apparel';
       roomHeading.textContent = isApparel ? t('roomHeadingApparel') : t('roomHeadingFootwear');
-      roomCount.textContent = isApparel ? `6 ${t('pieces')}` : `5 ${t('silhouettes')}`;
+      roomCount.textContent = isApparel ? `${roomItems.apparel.length} ${t('pieces')}` : `${roomItems.footwear.length} ${t('silhouettes')}`;
       tabApparel.setAttribute('aria-selected', String(isApparel));
       tabFootwear.setAttribute('aria-selected', String(!isApparel));
     }
 
     function showRoom(room) {
+      const revealFootwear = room === 'footwear' && viewFootwear.classList.contains('hidden');
+      footwearEntrance?.revert();
+      detailMotion?.revert();
+      inspectSide.hidden = true;
       currentRoom = room;
       inspectedIdx = -1;
       viewInspect.classList.add('hidden');
       viewApparel.classList.toggle('hidden', room !== 'apparel');
       viewFootwear.classList.toggle('hidden', room !== 'footwear');
       updateRoomHeader();
+      if (revealFootwear && window.gsap && !reducedMotion.matches) {
+        footwearEntrance = gsap.fromTo(footwearRack.children, { y: 9, opacity: 0.5 }, {
+          y: 0, opacity: 1, stagger: 0.025, duration: 0.35, ease: 'power2.out', clearProps: 'transform,opacity'
+        });
+      }
     }
 
     tabApparel.addEventListener('click', () => showRoom('apparel'));
     tabFootwear.addEventListener('click', () => showRoom('footwear'));
 
     function fillInspect(item) {
-      document.getElementById('inspectImg').src = item.img;
-      document.getElementById('inspectImg').alt = item.name;
+      renderInspectColors(item);
       document.getElementById('inspectCode').textContent = item.code;
       document.getElementById('inspectPrice').textContent = `$${item.price}`;
       document.getElementById('inspectTitle').textContent = item.name;
@@ -1990,7 +2267,10 @@
       document.getElementById('addBagBtn').textContent = t('addToBag');
     }
 
-    function openPieceInRoom(idx, scrollToRoom = false) {
+    function openPieceInRoom(idx, scrollToRoom = false, sidePhoto = null) {
+      footwearEntrance?.revert();
+      detailMotion?.revert();
+      inspectSide.hidden = true;
       inspectedIdx = idx;
       activeQty = 1;
       currentRoom = CATALOG[idx].room;
@@ -1999,20 +2279,45 @@
       viewApparel.classList.add('hidden');
       viewFootwear.classList.add('hidden');
       viewInspect.classList.remove('hidden');
+      if (window.gsap && !reducedMotion.matches) {
+        detailMotion = gsap.timeline({ onComplete: () => { inspectSide.hidden = true; } });
+        if (sidePhoto) {
+          inspectSide.src = sidePhoto;
+          inspectSide.hidden = false;
+          detailMotion.to(inspectSide, { opacity: 0, x: -18, duration: 0.25, ease: 'power2.in', clearProps: 'opacity,transform' }, 0);
+        }
+        detailMotion.fromTo(inspectImg, { scale: 0.95, x: sidePhoto ? 12 : 0, opacity: sidePhoto ? 0 : 0.5 },
+          { x: 0, scale: 1, opacity: 1, duration: 0.44, ease: 'power3.out', clearProps: 'transform,opacity' }, sidePhoto ? 0.08 : 0);
+        detailMotion.fromTo('.inspect-specs', { y: 10, opacity: 0.4 },
+          { y: 0, opacity: 1, duration: 0.32, ease: 'power2.out', clearProps: 'transform,opacity' }, 0.06);
+      }
       if (scrollToRoom) {
-        document.getElementById('showroom').scrollIntoView({ behavior: 'smooth' });
+        document.getElementById('showroom').scrollIntoView({ behavior: reducedMotion.matches ? 'instant' : 'smooth' });
       }
     }
 
-    document.getElementById('backToRoom').addEventListener('click', () => showRoom(currentRoom));
-    document.getElementById('prevPiece').addEventListener('click', () => {
-      const next = (inspectedIdx - 1 + CATALOG.length) % CATALOG.length;
-      openPieceInRoom(next, false);
-    });
-    document.getElementById('nextPiece').addEventListener('click', () => {
-      const next = (inspectedIdx + 1) % CATALOG.length;
-      openPieceInRoom(next, false);
-    });
+    function returnToRoom() {
+      const prior = CATALOG[inspectedIdx];
+      showRoom(currentRoom);
+      if (prior?.room === 'apparel') {
+        const index = roomItems.apparel.indexOf(prior);
+        moveRail(index, false);
+        railSlots[index].firstElementChild.focus({ preventScroll: true });
+      } else {
+        footwearButtons.get(prior?.id)?.focus();
+      }
+    }
+
+    function stepInspection(direction) {
+      const items = roomItems[currentRoom];
+      const index = items.indexOf(CATALOG[inspectedIdx]);
+      const next = items[(index + direction + items.length) % items.length];
+      openPieceInRoom(CATALOG.indexOf(next));
+    }
+
+    document.getElementById('backToRoom').addEventListener('click', returnToRoom);
+    document.getElementById('prevPiece').addEventListener('click', () => stepInspection(-1));
+    document.getElementById('nextPiece').addEventListener('click', () => stepInspection(1));
     document.getElementById('qtyDec').addEventListener('click', () => {
       activeQty = Math.max(1, activeQty - 1);
       document.getElementById('qtyNum').textContent = String(activeQty);
@@ -2025,6 +2330,7 @@
     // Spring-damped subtle 3D tilt on inspected garment (Kowalski spring feel)
     const inspectStage = document.getElementById('inspectStage');
     const inspectImg = document.getElementById('inspectImg');
+    const inspectSide = document.getElementById('inspectSide');
     let tiltTx = 0, tiltTy = 0, tiltCx = 0, tiltCy = 0, tiltRaf = null;
     function stepTilt() {
       tiltCx += (tiltTx - tiltCx) * 0.14;
@@ -2037,7 +2343,7 @@
       }
     }
     inspectStage.addEventListener('pointermove', e => {
-      if (e.pointerType === 'touch' || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      if (e.pointerType === 'touch' || reducedMotion.matches || detailMotion?.isActive()) return;
       const r = inspectStage.getBoundingClientRect();
       tiltTx = ((e.clientX - r.left) / r.width - 0.5) * 14;
       tiltTy = ((e.clientY - r.top) / r.height - 0.5) * -10;
@@ -2048,39 +2354,233 @@
       if (!tiltRaf) tiltRaf = requestAnimationFrame(stepTilt);
     });
 
+    const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+    const apparelGrid = document.getElementById('apparelGrid');
+    const railName = document.getElementById('railName');
+    const railPosition = document.getElementById('railPosition');
+    const railPrev = document.getElementById('railPrev');
+    const railNext = document.getElementById('railNext');
+    const railSlots = [];
+    let railCenters = [];
+    let railIndex = -1;
+    let railTarget = null;
+    let railMotion;
+    let detailMotion;
+    let railFrame;
+
+    function measureRail() {
+      if (!apparelGrid.clientWidth) return;
+      railCenters = railSlots.map(slot => slot.offsetLeft + (slot.offsetWidth - apparelGrid.clientWidth) / 2);
+      drawRail();
+    }
+
+    function drawRail() {
+      if (!railCenters.length) return;
+      const stride = railCenters[1] - railCenters[0];
+      const position = (apparelGrid.scrollLeft - railCenters[0]) / stride;
+      const nearest = Math.max(0, Math.min(railSlots.length - 1, Math.round(position)));
+
+      railSlots.forEach((slot, index) => {
+        const delta = index - position;
+        const distance = Math.abs(delta);
+        slot.style.zIndex = String(1000 - Math.min(999, Math.round(distance * 100)));
+        slot.style.setProperty('--rail-drop', `${Math.min(10, distance * 3)}px`);
+      });
+      if (railIndex === nearest) return;
+
+      railIndex = nearest;
+      railName.textContent = roomItems.apparel[nearest].name;
+      railPosition.textContent = `${String(nearest + 1).padStart(2, '0')} / ${railSlots.length}`;
+      railPrev.disabled = nearest === 0;
+      railNext.disabled = nearest === railSlots.length - 1;
+    }
+
+    function stopRailMotion() {
+      railMotion?.kill();
+      if (railTarget !== null) railSlots[railTarget].querySelector('img').style.removeProperty('--rail-sway');
+      railTarget = null;
+      apparelGrid.classList.remove('is-snapping');
+    }
+
+    function moveRail(index, animate = true) {
+      stopRailMotion();
+      measureRail();
+      const target = railCenters[index];
+      if (target === undefined) return;
+
+      if (!animate || !window.gsap || reducedMotion.matches) {
+        apparelGrid.scrollLeft = target;
+        drawRail();
+        return;
+      }
+
+      const slide = { x: apparelGrid.scrollLeft };
+      const direction = Math.sign(target - slide.x);
+      if (!direction) return;
+      const photo = railSlots[index].querySelector('img');
+      railTarget = index;
+      apparelGrid.classList.add('is-snapping');
+      railMotion = gsap.timeline({ onComplete: stopRailMotion });
+      railMotion.to(slide, {
+        x: target, duration: 0.48, ease: 'power3.out',
+        onUpdate: () => { apparelGrid.scrollLeft = slide.x; }
+      }, 0);
+      railMotion.fromTo(photo, { '--rail-sway': `${direction * 7}deg` },
+        { '--rail-sway': '0deg', duration: 0.65, ease: 'back.out(2)' }, 0);
+    }
+
+    function buildApparelRail() {
+      roomItems.apparel.forEach(item => {
+        const slot = document.createElement('div');
+        slot.className = 'rail-slot';
+        slot.setAttribute('role', 'listitem');
+        const button = document.createElement('button');
+        button.className = 'rail-piece';
+        button.type = 'button';
+        button.setAttribute('aria-label', `${item.name}, $${item.price}`);
+        const img = new Image(720, 960);
+        img.alt = '';
+        img.draggable = false;
+        img.loading = 'lazy';
+        img.decoding = 'async';
+        img.src = lateralImage(item);
+        button.append(img);
+        button.addEventListener('click', () => {
+          openPieceInRoom(CATALOG.indexOf(item), true, img.currentSrc || img.src);
+          document.getElementById('backToRoom').focus({ preventScroll: true });
+        });
+        slot.append(button);
+        apparelGrid.append(slot);
+        railSlots.push(slot);
+      });
+
+      moveRail(1, false);
+      new ResizeObserver(measureRail).observe(apparelGrid);
+      apparelGrid.addEventListener('scroll', () => {
+        if (railFrame) return;
+        railFrame = requestAnimationFrame(() => {
+          railFrame = null;
+          drawRail();
+        });
+      }, { passive: true });
+      railPrev.addEventListener('click', () => moveRail((railTarget ?? railIndex) - 1));
+      railNext.addEventListener('click', () => moveRail((railTarget ?? railIndex) + 1));
+      apparelGrid.addEventListener('keydown', event => {
+        if (!['ArrowLeft', 'ArrowRight'].includes(event.key)) return;
+        const index = (railTarget ?? railIndex) + (event.key === 'ArrowLeft' ? -1 : 1);
+        if (!railSlots[index]) return;
+        event.preventDefault();
+        railSlots[index].firstElementChild.focus({ preventScroll: true });
+        moveRail(index);
+      });
+      apparelGrid.addEventListener('wheel', stopRailMotion, { passive: true });
+
+      let drag;
+      let suppressClick = false;
+      apparelGrid.addEventListener('pointerdown', event => {
+        stopRailMotion();
+        suppressClick = false;
+        if (event.pointerType !== 'mouse' || event.button !== 0) return;
+        drag = { id: event.pointerId, x: event.clientX, scroll: apparelGrid.scrollLeft };
+      });
+      apparelGrid.addEventListener('pointermove', event => {
+        if (!drag || event.pointerId !== drag.id) return;
+        const dx = event.clientX - drag.x;
+        if (!suppressClick && Math.abs(dx) < 6) return;
+        if (!suppressClick) {
+          suppressClick = true;
+          apparelGrid.classList.add('is-dragging');
+          apparelGrid.setPointerCapture(drag.id);
+        }
+        apparelGrid.scrollLeft = drag.scroll - dx;
+      });
+      function endDrag(event) {
+        if (!drag || event.pointerId !== drag.id) return;
+        drag = null;
+        if (!suppressClick) return;
+        drawRail();
+        moveRail(railIndex);
+        apparelGrid.classList.remove('is-dragging');
+      }
+      apparelGrid.addEventListener('pointerup', endDrag);
+      apparelGrid.addEventListener('pointercancel', endDrag);
+      apparelGrid.addEventListener('pointerleave', event => {
+        if (!suppressClick && drag?.id === event.pointerId) drag = null;
+      });
+      apparelGrid.addEventListener('click', event => {
+        if (suppressClick && event.detail) event.stopPropagation();
+      }, true);
+    }
+
+    const inspectColors = document.getElementById('inspectColors');
+    const inspectColorName = document.getElementById('inspectColorName');
+
+    function selectApparelColor(item, color) {
+      selectedColors.set(item.id, color);
+      const slot = railSlots[roomItems.apparel.indexOf(item)];
+      slot.querySelector('img').src = lateralImage(item, color);
+    }
+
+    function renderInspectColors(item) {
+      const options = COLORWAYS[item.id] ?? [];
+      const selected = selectedColors.get(item.id) ?? options[0];
+      inspectColors.hidden = options.length < 2;
+      inspectColorName.hidden = !selected;
+      inspectColorName.textContent = selected ? COLORS[selected][lang] : '';
+      inspectImg.src = garmentImage(item, selected);
+      inspectImg.alt = selected ? `${item.name} · ${COLORS[selected][lang]}` : item.name;
+      inspectColors.replaceChildren();
+
+      if (inspectColors.hidden) return;
+      options.forEach(color => {
+        const button = document.createElement('button');
+        const label = COLORS[color][lang];
+        button.type = 'button';
+        button.className = 'color-swatch';
+        button.style.setProperty('--swatch', COLORS[color].hex);
+        button.setAttribute('aria-label', label);
+        button.setAttribute('aria-pressed', String(color === selected));
+        button.title = label;
+        button.addEventListener('click', () => {
+          if (button.getAttribute('aria-pressed') === 'true') return;
+          selectApparelColor(item, color);
+          const src = garmentImage(item, color);
+          inspectImg.src = src;
+          inspectImg.alt = `${item.name} · ${COLORS[color][lang]}`;
+          inspectColorName.textContent = COLORS[color][lang];
+          inspectColors.querySelector('[aria-pressed="true"]').setAttribute('aria-pressed', 'false');
+          button.setAttribute('aria-pressed', 'true');
+          if (window.gsap && !reducedMotion.matches) {
+            gsap.fromTo(inspectImg, { opacity: 0.45 }, { opacity: 1, duration: 0.27, overwrite: 'auto', clearProps: 'opacity' });
+          }
+        });
+        inspectColors.append(button);
+      });
+    }
+
     function buildRooms() {
-      const apparelGrid = document.getElementById('apparelGrid');
-      const shelfTop = document.getElementById('shelfTop');
-      const shelfBottom = document.getElementById('shelfBottom');
       const staticCarousel = document.getElementById('staticCarousel');
 
       CATALOG.forEach((item, idx) => {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'piece-btn' + (item.room === 'footwear' ? ' sneaker-piece' : '');
-        btn.setAttribute('role', 'listitem');
-        btn.setAttribute('aria-label', `${item.name} $${item.price}`);
-        btn.innerHTML = `
-          <span class="piece-tag num">${item.code}</span>
-          <span class="piece-ticks" aria-hidden="true"></span>
-          <img src="${item.img}" alt="${item.name}" loading="${idx < 6 ? 'eager' : 'lazy'}" decoding="async">
-        `;
-
-        const setReadout = () => {
-          roomReadout.innerHTML = `<strong>${item.name}</strong><span class="r-price num">$${item.price}</span>`;
-        };
-        const clearReadout = () => {
-          roomReadout.innerHTML = `<strong>${t('hoverPrompt')}</strong><span class="r-price num">$165 - $290</span>`;
-        };
-
-        btn.addEventListener('mouseenter', setReadout);
-        btn.addEventListener('focus', setReadout);
-        btn.addEventListener('mouseleave', clearReadout);
-        btn.addEventListener('click', () => openPieceInRoom(idx, false));
-
-        if (item.room === 'apparel') apparelGrid.appendChild(btn);
-        else if (item.tier === 'top') shelfTop.appendChild(btn);
-        else shelfBottom.appendChild(btn);
+        if (item.room === 'footwear') {
+          const slot = document.createElement('div');
+          slot.className = 'sneaker-slot';
+          slot.setAttribute('role', 'listitem');
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'sneaker-piece';
+          button.innerHTML = `
+            <span class="sneaker-display"><img src="${item.img}" alt="" width="800" height="520" loading="lazy" decoding="async"></span>
+            <span class="sneaker-label"><span>${item.name}</span><span class="sneaker-label-price num">$${item.price}</span></span>
+          `;
+          button.addEventListener('click', () => {
+            openPieceInRoom(idx, true);
+            document.getElementById('backToRoom').focus({ preventScroll: true });
+          });
+          slot.append(button);
+          footwearRack.append(slot);
+          footwearButtons.set(item.id, button);
+        }
 
         if (['pd-01', 'pd-02', 'pd-04', 'sn-03', 'sn-04', 'sn-02'].includes(item.id)) {
           const sp = document.createElement('button');
@@ -2094,11 +2594,6 @@
           staticCarousel.appendChild(sp);
         }
       });
-
-      const l1 = document.createElement('div'); l1.className = 'shelf-ledge'; l1.setAttribute('aria-hidden', 'true');
-      const l2 = document.createElement('div'); l2.className = 'shelf-ledge'; l2.setAttribute('aria-hidden', 'true');
-      shelfTop.appendChild(l1);
-      shelfBottom.appendChild(l2);
     }
 
     /* =========================================================================
@@ -2141,7 +2636,7 @@
           <img src="${it.img}" alt="${it.name}">
           <div>
             <div class="bag-row-title">${it.name}</div>
-            <div class="bag-row-meta num">${it.code} · ${it.size} × ${it.qty} · $${it.price * it.qty}</div>
+            <div class="bag-row-meta num">${it.code}${it.color ? ` · ${COLORS[it.color][lang]}` : ''} · ${it.size} × ${it.qty} · $${it.price * it.qty}</div>
           </div>
           <button class="bag-del" type="button">${t('remove')}</button>
         `;
@@ -2150,13 +2645,18 @@
       });
     }
 
+    function addBagItem(entry) {
+      const hit = bag.find(x => x.id === entry.id && x.size === entry.size && x.color === entry.color);
+      if (hit) hit.qty += entry.qty;
+      else bag.push(entry);
+      renderBag();
+    }
+
     document.getElementById('addBagBtn').addEventListener('click', () => {
       if (inspectedIdx < 0) return;
       const item = CATALOG[inspectedIdx];
-      const hit = bag.find(x => x.id === item.id && x.size === activeSize);
-      if (hit) hit.qty += activeQty;
-      else bag.push({ id: item.id, code: item.code, name: item.name, price: item.price, img: item.img, size: activeSize, qty: activeQty });
-      renderBag();
+      const color = selectedColors.get(item.id) ?? COLORWAYS[item.id]?.[0];
+      addBagItem({ id: item.id, code: item.code, name: item.name, price: item.price, img: garmentImage(item, color), color, size: activeSize, qty: activeQty });
       document.getElementById('addBagBtn').textContent = t('added');
       setTimeout(openBag, 240);
     });
@@ -2167,9 +2667,10 @@
       if (bag.length) drawerNote.classList.add('show');
     });
     document.addEventListener('keydown', e => {
+      if (packDialog.open) return;
       if (e.key === 'Escape') {
         if (drawer.classList.contains('open')) closeBag();
-        else if (inspectedIdx >= 0) showRoom(currentRoom);
+        else if (inspectedIdx >= 0) returnToRoom();
       }
       if (inspectedIdx >= 0 && !drawer.classList.contains('open')) {
         if (e.key === 'ArrowLeft') document.getElementById('prevPiece').click();
@@ -2603,7 +3104,7 @@
         document.querySelectorAll('[data-nav]').forEach(a => a.classList.toggle('active', a.dataset.nav === id));
       });
     }, { rootMargin: '-40% 0px -45% 0px' });
-    ['lookbook', 'lookbook-static', 'showroom', 'architecture', 'studio'].forEach(id => {
+    ['inicio', 'lookbook', 'lookbook-static', 'showroom', 'architecture', 'studio'].forEach(id => {
       const el = document.getElementById(id);
       if (el) navObs.observe(el);
     });
@@ -2621,9 +3122,145 @@
       document.body.classList.toggle('paused', document.hidden);
     });
 
+    const signalPack = {
+      id: 'pack-signal',
+      code: 'PACK',
+      name: 'Pack Signal',
+      price: 495,
+      img: 'assets/pack-signal.webp',
+      pieces: [
+        { id: 'pd-04', color: 'signal' },
+        { id: 'pd-11' },
+        { id: 'sn-06' }
+      ]
+    };
+    const packDialog = document.getElementById('packDialog');
+    const packForm = document.getElementById('packForm');
+
+    function makeFeaturedProduct(piece, showPrice = false) {
+      const index = CATALOG.findIndex(item => item.id === piece.id);
+      const item = CATALOG[index];
+      const li = document.createElement('li');
+      const button = document.createElement('button');
+      button.type = 'button';
+      const photo = new Image(42, 42);
+      if (showPrice) photo.loading = 'lazy';
+      photo.src = garmentImage(item, piece.color);
+      photo.alt = '';
+      const name = document.createElement('span');
+      name.textContent = item.name;
+      button.append(photo, name);
+      if (showPrice) {
+        const price = document.createElement('span');
+        price.className = 'collection-price num';
+        price.textContent = `$${item.price}`;
+        button.append(price);
+      }
+      button.addEventListener('click', () => {
+        if (piece.color) selectApparelColor(item, piece.color);
+        openPieceInRoom(index, true);
+        document.getElementById('backToRoom').focus({ preventScroll: true });
+      });
+      li.append(button);
+      return li;
+    }
+
+    function initPack() {
+      const links = document.getElementById('packPieces');
+      const fields = document.getElementById('packSizes');
+      const collection = document.getElementById('collectionProducts');
+      collection.append(...[...signalPack.pieces, { id: 'pd-12' }].map(piece => makeFeaturedProduct(piece, true)));
+
+      signalPack.pieces.forEach(piece => {
+        const item = CATALOG.find(entry => entry.id === piece.id);
+        links.append(makeFeaturedProduct(piece));
+
+        const label = document.createElement('label');
+        const size = document.createElement('select');
+        size.name = item.id;
+        item.sizes.forEach(value => size.add(new Option(value, value)));
+        size.selectedIndex = Math.min(2, size.options.length - 1);
+        label.append(item.name, size);
+        fields.append(label);
+      });
+
+      document.querySelectorAll('[data-pack-price]').forEach(el => {
+        el.textContent = `$${signalPack.price}`;
+      });
+      document.getElementById('openPack').addEventListener('click', () => packDialog.showModal());
+      document.getElementById('closePack').addEventListener('click', () => packDialog.close());
+      packForm.addEventListener('submit', event => {
+        event.preventDefault();
+        const sizes = new FormData(packForm);
+        const size = signalPack.pieces.map(piece => sizes.get(piece.id)).join(' / ');
+        addBagItem({ id: signalPack.id, code: signalPack.code, name: signalPack.name, price: signalPack.price, img: signalPack.img, size, qty: 1 });
+        packDialog.close();
+        openBag();
+      });
+
+      document.querySelectorAll('[data-collection-room]').forEach(link => {
+        link.addEventListener('click', () => showRoom(link.dataset.collectionRoom));
+      });
+    }
+
+    function initCampaignMotion() {
+      if (!window.gsap || reducedMotion.matches) return;
+      const campaign = document.getElementById('inicio');
+      const intro = document.getElementById('campaignIntro');
+
+      if (!location.hash && window.scrollY < 16) {
+        intro.hidden = false;
+        const panels = intro.querySelectorAll('.campaign-intro-panel');
+        const logo = intro.querySelector('img');
+        const interruption = new AbortController();
+        const finish = () => {
+          intro.hidden = true;
+          interruption.abort();
+        };
+        const opening = gsap.timeline({ onComplete: finish });
+        const skip = () => { opening.progress(1); finish(); };
+        ['pointerdown', 'keydown', 'scroll'].forEach(type => {
+          addEventListener(type, skip, { once: true, passive: true, signal: interruption.signal });
+        });
+        reducedMotion.addEventListener('change', skip, { once: true, signal: interruption.signal });
+        opening
+          .fromTo(logo, { opacity: 0, scale: .88 }, { opacity: 1, scale: 1, duration: .34, ease: 'power3.out' })
+          .to(logo, { opacity: 0, scaleY: .04, duration: .24, ease: 'power3.in' }, .65)
+          .to(panels[0], { yPercent: -102, duration: .58, ease: 'power4.inOut' }, .75)
+          .to(panels[1], { yPercent: 102, duration: .58, ease: 'power4.inOut' }, .75)
+          .from('.campaign-figure', { y: 22, scale: .96, duration: .7, ease: 'power3.out', clearProps: 'transform' }, .95);
+      }
+
+      if (!window.ScrollTrigger) return;
+      gsap.registerPlugin(ScrollTrigger);
+      const media = gsap.matchMedia();
+      media.add('(min-width: 621px) and (prefers-reduced-motion: no-preference)', () => {
+        campaign.classList.add('has-scroll');
+        const scrollLook = gsap.timeline({
+          scrollTrigger: { trigger: campaign, start: 'top top', end: 'bottom bottom', scrub: .4 }
+        });
+        scrollLook
+          .to('.campaign-light', { opacity: .9, duration: 1 }, 0)
+          .fromTo('.campaign-glint', { xPercent: -45 }, { xPercent: 49, duration: 1, ease: 'none' }, 0)
+          .to('.campaign-glint', { opacity: 1, duration: .26 }, .14)
+          .to('.campaign-glint', { opacity: 0, duration: .37 }, .53)
+          .to('#packFigure', { scale: 1.08, y: 13, duration: 1, ease: 'none' }, 0);
+        return () => campaign.classList.remove('has-scroll');
+      });
+      media.add('(max-width: 620px) and (prefers-reduced-motion: no-preference)', () => {
+        gsap.to('.campaign-light', {
+          opacity: .75,
+          scrollTrigger: { trigger: '.campaign-copy', start: 'top 70%', end: 'top 28%', scrub: .32 }
+        });
+      });
+    }
+
     // Boot
     buildRooms();
+    buildApparelRail();
+    initPack();
     setLang(lang);
+    initCampaignMotion();
     applyGates();
   </script>
 </body>

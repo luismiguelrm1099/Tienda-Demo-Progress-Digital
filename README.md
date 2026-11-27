@@ -1,4 +1,4 @@
-# PD Archive — Tienda Demo Progress Digital
+# Progress Digital - Demo Store
 
 Demo interactiva de portafolio creada por **Progress Digital**: carrusel en espiral 3D WebGL2 nativo (*Spiral Flux* en escritorio y celular), showroom espacial 2.5D full-bleed de ropa y sneakers con zoom en sala, comparador wireframe interactivo, bolsa de compra demo y selector en vivo `EN / ES`.
 
@@ -6,8 +6,10 @@ Demo interactiva de portafolio creada por **Progress Digital**: carrusel en espi
 
 - `index.html` — Aplicación completa en HTML, CSS y JavaScript puro (sin frameworks ni paso de compilación).
 - `assets/logo.webp` — Logo de Progress Digital.
-- `assets/garments/` — 6 prendas recortadas en WebP transparente.
-- `assets/sneakers/` — 5 sneakers recortados en WebP transparente.
+- `assets/garments/` — 12 prendas y 6 variantes de color con fotos frontales y laterales en WebP transparente.
+- `assets/pack-signal.webp` — Maniquí del hero con el conjunto Pack Signal.
+- `assets/vendor/` — GSAP y ScrollTrigger 3.15.1 locales para la apertura, el scroll y las transiciones del showroom.
+- `assets/sneakers/` — 10 sneakers en WebP transparente, presentados en un escaparate iluminado.
 - `Dockerfile` y `nginx.conf` — Configuración ligera de Nginx con compresión gzip, `Accept-Ranges` y caché inmutable para `/assets/` lista para Coolify.
 
 ## Despliegue en Coolify (VPS)
