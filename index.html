@@ -42,6 +42,7 @@
       --accent: #18C8F0;
       --accent-soft: rgba(24, 200, 240, 0.14);
       --signal: #F4C430;
+      --garment-light: radial-gradient(ellipse at 50% 42%, rgba(244, 196, 48, .17), transparent 68%);
       --signal-bright: #FFD44F;
       --signal-ink: #090B0E;
 
@@ -635,7 +636,7 @@
       margin: 0 auto;
       position: relative;
       padding-top: 18px;
-      background: radial-gradient(ellipse at 50% 42%, #232B37, transparent 70%);
+      background: var(--garment-light);
     }
     .steel-rail {
       position: absolute;
@@ -865,11 +866,6 @@
       grid-template-columns: 1.2fr 0.8fr;
       gap: clamp(28px, 5vw, 72px);
       align-items: center;
-      animation: inspectIn 280ms var(--ease-out);
-    }
-    @keyframes inspectIn {
-      from { opacity: 0; transform: scale(0.96); }
-      to { opacity: 1; transform: scale(1); }
     }
     .inspect-stage {
       position: relative;
@@ -879,25 +875,23 @@
       min-height: 440px;
       padding: 12px 52px;
     }
-    .inspect-stage img {
-      max-width: 100%;
-      max-height: 460px;
-      object-fit: contain;
-      filter: drop-shadow(0 36px 46px rgba(0, 0, 0, 0.86));
-      transition: transform 200ms var(--ease-out);
-      will-change: transform;
-    }
-    .inspect-stage .inspect-side {
-      position: absolute;
-      inset: 50% auto auto 50%;
+    #viewInspect.is-apparel .inspect-stage { background: var(--garment-light); }
+    .inspect-photos {
+      display: grid;
+      place-items: center;
       width: 100%;
-      height: min(100%, 460px);
-      transform: translate(-50%, -50%);
-      filter: none;
-      transition: none;
-      pointer-events: none;
+      perspective: 850px;
     }
-    .inspect-side[hidden] { display: none; }
+    .inspect-photos img {
+      grid-area: 1 / 1;
+      width: 100%;
+      height: 460px;
+      object-fit: contain;
+      filter: drop-shadow(0 25px 30px #0009);
+      backface-visibility: hidden;
+    }
+    .inspect-photos img[hidden] { display: none; }
+    .inspect-photos.is-turning #inspectImg { visibility: hidden; }
     .inspect-arrow {
       position: absolute;
       top: 50%;
@@ -926,22 +920,12 @@
       padding: 8px 0;
     }
     .inspect-back-btn {
-      appearance: none;
-      border: 0;
-      background: transparent;
-      color: var(--ink-secondary);
-      font-size: 0.82rem;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      cursor: pointer;
-      margin-bottom: 24px;
-      padding: 4px 0;
-      transition: color 160ms var(--ease-out);
+      margin: 0 0 12px;
+      color: var(--signal);
+      border-color: rgba(244, 196, 48, .35);
     }
-    @media (hover: hover) and (pointer: fine) {
-      .inspect-back-btn:hover { color: var(--ink); }
-    }
+    .inspect-back-btn:hover { background: rgba(244, 196, 48, .1); }
+    .static-plate.is-apparel { background-image: var(--garment-light); }
     .inspect-code-row {
       display: flex;
       justify-content: space-between;
@@ -1464,12 +1448,12 @@
       .room-watermark { display: none; }
       .room-stage:has(#viewApparel:not(.hidden)) { min-height: 0; }
       .inspect-stage { min-height: 260px; padding: 8px 36px; }
-      .inspect-stage img { max-height: 270px; }
+      .inspect-photos img { height: 270px; }
       .scrub-wire-note, .scrub-studio-note { top: 12px; font-size: 0.64rem; }
       .scrub-wire-note { left: 12px; }
       .scrub-studio-note { right: 12px; }
     }
-    @media (max-width: 380px) {
+    @media (max-width: 460px) {
       .topbar { gap: 8px; padding-inline: 12px; }
       .top-right, .brand { gap: 6px; }
       .brand img { width: 23px; height: 23px; }
@@ -1498,7 +1482,7 @@
       }
     }
   </style>
-  <link rel="stylesheet" href="assets/campaign.css">
+  <link rel="stylesheet" href="assets/campaign.css?v=3">
 </head>
 <body>
   <a class="skip-link" href="#main" data-i18n="skip">Skip to content</a>
@@ -1513,8 +1497,9 @@
     </a>
 
     <nav class="nav-links" aria-label="Primary navigation">
-      <a href="#lookbook" data-nav="lookbook" class="active" data-i18n="navLookbook">Lookbook</a>
+      <a href="#inicio" data-nav="inicio" data-i18n="navHome">Home</a>
       <a href="#showroom" data-nav="showroom" data-i18n="navShowroom">Showroom</a>
+      <a href="#lookbook" data-nav="lookbook" data-i18n="navLookbook">Lookbook</a>
       <a href="#architecture" data-nav="architecture" data-i18n="navArch">Architecture</a>
       <a href="#studio" data-nav="studio" data-i18n="navStudio">Studio</a>
     </nav>
@@ -1545,12 +1530,23 @@
         <div class="campaign-copy">
           <h1 class="campaign-title" id="campaignTitle">Pack <span>Signal</span></h1>
           <p data-i18n="packSummary">Pulse Alpine in Signal Yellow, Obsidian Cargo and Signal Ridge.</p>
-          <button type="button" class="btn btn-primary campaign-buy" id="openPack">
-            <span data-i18n="choosePack">Choose pack</span><span class="num" data-pack-price></span>
-          </button>
+          <div class="campaign-actions">
+            <button type="button" class="btn btn-primary campaign-buy" id="openPack">
+              <span data-i18n="choosePack">Choose pack</span><span class="num" data-pack-price></span>
+            </button>
+            <button type="button" class="campaign-replay" id="replayPackMotion" hidden>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                <path d="M4 11a8 8 0 1 1 2 6m-2-6V5m0 6h6"/>
+              </svg>
+              <span data-i18n="replayPackMotion">Play motion</span>
+            </button>
+          </div>
         </div>
         <figure class="campaign-figure">
-          <img id="packFigure" src="assets/pack-signal.webp" width="900" height="1350" fetchpriority="high" decoding="async" data-i18n-alt="packImageAlt" alt="Obsidian mannequin wearing the yellow Pulse Alpine, black cargo pants and Signal Ridge sneakers">
+          <div class="campaign-pose" id="packPose">
+            <img id="packFigure" src="assets/pack-signal.webp" width="900" height="1350" fetchpriority="high" decoding="async" data-i18n-alt="packImageAlt" alt="Obsidian mannequin wearing the yellow Pulse Alpine, black cargo pants and Signal Ridge sneakers">
+          </div>
+          <canvas class="campaign-orbit" id="packOrbit" aria-hidden="true" hidden></canvas>
         </figure>
         <ul class="campaign-items" id="packPieces" data-i18n-label="packContents" aria-label="Pieces included in the pack"></ul>
       </div>
@@ -1618,13 +1614,19 @@
 
         <!-- In-Room Camera Zoom Inspection View -->
         <div class="room-view hidden" id="viewInspect" aria-live="polite">
+          <button class="btn btn-quiet inspect-back-btn" id="backToRoom" type="button">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            <span id="backToRoomLabel">Back to apparel rail</span>
+          </button>
           <div class="inspect-view">
             <div class="inspect-stage" id="inspectStage">
               <button class="inspect-arrow prev" id="prevPiece" type="button" aria-label="Previous piece">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 18l-6-6 6-6"/></svg>
               </button>
-              <img id="inspectImg" alt="">
-              <img id="inspectSide" class="inspect-side" alt="" aria-hidden="true" hidden>
+              <div class="inspect-photos" id="inspectPhotos">
+                <img id="inspectImg" alt="">
+                <img id="inspectSide" alt="" aria-hidden="true" hidden>
+              </div>
               <div id="inspectColors" class="inspect-colors" role="group" data-i18n-label="chooseColor" aria-label="Choose color" hidden></div>
               <button class="inspect-arrow next" id="nextPiece" type="button" aria-label="Next piece">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 18l6-6-6-6"/></svg>
@@ -1632,11 +1634,6 @@
             </div>
 
             <div class="inspect-specs">
-              <button class="inspect-back-btn" id="backToRoom" type="button">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-                <span data-i18n="backRail">Back to showroom</span>
-              </button>
-
               <div class="inspect-code-row">
                 <strong id="inspectCode">PD-01</strong>
                 <span id="inspectPrice" class="num">$290</span>
@@ -1973,7 +1970,7 @@
         id: 'pd-08', code: 'PD-08', room: 'apparel', name: 'Phase Heavyweight Hoodie', price: 175,
         descEn: 'Heavyweight technical fleece hoodie with a structured hood and a kangaroo pocket.',
         descEs: 'Sudadera de felpa técnica gruesa con capucha estructurada y bolsillo canguro.',
-        img: 'assets/garments/phase-hoodie.webp', sizes: ['XS', 'S', 'M', 'L', 'XL']
+        img: 'assets/garments/phase-hoodie.webp', sideImg: 'assets/garments/phase-hoodie-clean-side.webp', sizes: ['XS', 'S', 'M', 'L', 'XL']
       },
       {
         id: 'pd-09', code: 'PD-09', room: 'apparel', name: 'Orbit Storm Parka', price: 285,
@@ -2036,17 +2033,18 @@
     }
 
     function lateralImage(item, color) {
-      return garmentImage(item, color).replace('.webp', '-side.webp');
+      return item.sideImg ?? garmentImage(item, color).replace('.webp', '-side.webp');
     }
 
     const COPY = {
       en: {
         packSummary: 'Pulse Alpine in Signal Yellow, Obsidian Cargo and Signal Ridge.',
+        replayPackMotion: 'Play motion',
         choosePack: 'Choose pack', closePack: 'Close', packContents: 'Pieces included in the pack',
         packImageAlt: 'Obsidian mannequin wearing the yellow Pulse Alpine, black cargo pants and Signal Ridge sneakers',
         collectionHeading: 'The collection',
         skip: 'Skip to content',
-        navLookbook: 'Lookbook', navShowroom: 'Showroom', navArch: 'Architecture', navStudio: 'Studio',
+        navHome: 'Home', navLookbook: 'Lookbook', navShowroom: 'Showroom', navArch: 'Architecture', navStudio: 'Studio',
         bag: 'Bag',
         heroTitle: 'Spatial streetwear, built without heavy 3D',
         heroSub: 'Curved WebGL2 lookbook and studio-lit virtual showroom crafted by Progress Digital.',
@@ -2058,7 +2056,7 @@
         roomHeadingFootwear: 'Footwear wall',
         tabApparel: 'Apparel',
         tabFootwear: 'Footwear',
-        backRail: 'Back to showroom',
+        backRail: 'Back to apparel rail', backSneakers: 'Back to footwear wall',
         selectSize: 'Select size',
         railHint: 'Swipe or drag the rail. Select a garment to see its details.',
         prevGarment: 'Previous garment', nextGarment: 'Next garment', chooseColor: 'Choose color',
@@ -2107,11 +2105,12 @@
       },
       es: {
         packSummary: 'Pulse Alpine en amarillo industrial, Obsidian Cargo y Signal Ridge.',
+        replayPackMotion: 'Ver movimiento',
         choosePack: 'Elegir pack', closePack: 'Cerrar', packContents: 'Prendas y calzado del pack',
         packImageAlt: 'Maniquí obsidiana con la chaqueta Pulse Alpine amarilla, pantalón cargo negro y tenis Signal Ridge',
         collectionHeading: 'La colección',
         skip: 'Ir al contenido',
-        navLookbook: 'Lookbook', navShowroom: 'Showroom', navArch: 'Arquitectura', navStudio: 'Estudio',
+        navHome: 'Inicio', navLookbook: 'Lookbook', navShowroom: 'Showroom', navArch: 'Arquitectura', navStudio: 'Estudio',
         bag: 'Bolsa',
         heroTitle: 'Showroom urbano espacial, sin peso 3D',
         heroSub: 'Lookbook curvo en WebGL2 y tienda virtual con luz de estudio diseñada por Progress Digital.',
@@ -2123,7 +2122,7 @@
         roomHeadingFootwear: 'Muro de sneakers',
         tabApparel: 'Prendas',
         tabFootwear: 'Sneakers',
-        backRail: 'Volver al showroom',
+        backRail: 'Volver al riel de prendas', backSneakers: 'Volver al muro de sneakers',
         selectSize: 'Elige talla',
         railHint: 'Desliza o arrastra el perchero. Selecciona una prenda para ver sus detalles.',
         prevGarment: 'Prenda anterior', nextGarment: 'Prenda siguiente', chooseColor: 'Elige color',
@@ -2215,6 +2214,7 @@
 
     function updateRoomHeader() {
       const isApparel = currentRoom === 'apparel';
+      document.getElementById('backToRoomLabel').textContent = t(isApparel ? 'backRail' : 'backSneakers');
       roomHeading.textContent = isApparel ? t('roomHeadingApparel') : t('roomHeadingFootwear');
       roomCount.textContent = isApparel ? `${roomItems.apparel.length} ${t('pieces')}` : `${roomItems.footwear.length} ${t('silhouettes')}`;
       tabApparel.setAttribute('aria-selected', String(isApparel));
@@ -2224,8 +2224,7 @@
     function showRoom(room) {
       const revealFootwear = room === 'footwear' && viewFootwear.classList.contains('hidden');
       footwearEntrance?.revert();
-      detailMotion?.revert();
-      inspectSide.hidden = true;
+      resetInspectionMotion();
       currentRoom = room;
       inspectedIdx = -1;
       viewInspect.classList.add('hidden');
@@ -2269,8 +2268,7 @@
 
     function openPieceInRoom(idx, scrollToRoom = false, sidePhoto = null) {
       footwearEntrance?.revert();
-      detailMotion?.revert();
-      inspectSide.hidden = true;
+      resetInspectionMotion();
       inspectedIdx = idx;
       activeQty = 1;
       currentRoom = CATALOG[idx].room;
@@ -2279,17 +2277,10 @@
       viewApparel.classList.add('hidden');
       viewFootwear.classList.add('hidden');
       viewInspect.classList.remove('hidden');
+      viewInspect.classList.toggle('is-apparel', currentRoom === 'apparel');
       if (window.gsap && !reducedMotion.matches) {
-        detailMotion = gsap.timeline({ onComplete: () => { inspectSide.hidden = true; } });
-        if (sidePhoto) {
-          inspectSide.src = sidePhoto;
-          inspectSide.hidden = false;
-          detailMotion.to(inspectSide, { opacity: 0, x: -18, duration: 0.25, ease: 'power2.in', clearProps: 'opacity,transform' }, 0);
-        }
-        detailMotion.fromTo(inspectImg, { scale: 0.95, x: sidePhoto ? 12 : 0, opacity: sidePhoto ? 0 : 0.5 },
-          { x: 0, scale: 1, opacity: 1, duration: 0.44, ease: 'power3.out', clearProps: 'transform,opacity' }, sidePhoto ? 0.08 : 0);
-        detailMotion.fromTo('.inspect-specs', { y: 10, opacity: 0.4 },
-          { y: 0, opacity: 1, duration: 0.32, ease: 'power2.out', clearProps: 'transform,opacity' }, 0.06);
+        if (sidePhoto) turnInspectionPhoto(sidePhoto);
+        else detailMotion = gsap.from(inspectImg, { opacity: .5, y: 6, duration: .32, ease: 'power2.out', clearProps: 'opacity,transform' });
       }
       if (scrollToRoom) {
         document.getElementById('showroom').scrollIntoView({ behavior: reducedMotion.matches ? 'instant' : 'smooth' });
@@ -2302,6 +2293,7 @@
       if (prior?.room === 'apparel') {
         const index = roomItems.apparel.indexOf(prior);
         moveRail(index, false);
+        document.getElementById('showroom').scrollIntoView({ behavior: 'instant' });
         railSlots[index].firstElementChild.focus({ preventScroll: true });
       } else {
         footwearButtons.get(prior?.id)?.focus();
@@ -2331,6 +2323,45 @@
     const inspectStage = document.getElementById('inspectStage');
     const inspectImg = document.getElementById('inspectImg');
     const inspectSide = document.getElementById('inspectSide');
+    const inspectPhotos = document.getElementById('inspectPhotos');
+    let inspectionTurn = 0;
+
+    function resetInspectionMotion() {
+      inspectionTurn++;
+      detailMotion?.revert();
+      detailMotion = null;
+      inspectSide.hidden = true;
+      inspectPhotos.classList.remove('is-turning');
+      if (tiltRaf) cancelAnimationFrame(tiltRaf);
+      tiltRaf = null;
+      tiltTx = tiltTy = tiltCx = tiltCy = 0;
+      inspectImg.style.removeProperty('transform');
+    }
+
+    async function turnInspectionPhoto(sidePhoto) {
+      const turn = inspectionTurn;
+      inspectSide.src = sidePhoto;
+      inspectSide.hidden = false;
+      inspectPhotos.classList.add('is-turning');
+      try {
+        await Promise.all([inspectImg.decode(), inspectSide.decode()]);
+      } catch {
+        if (turn === inspectionTurn) resetInspectionMotion();
+        return;
+      }
+      if (turn !== inspectionTurn) return;
+
+      detailMotion = gsap.timeline();
+      detailMotion
+        .to(inspectSide, { rotationY: -88, duration: .20, ease: 'power2.in' })
+        .call(() => {
+          inspectSide.hidden = true;
+          inspectPhotos.classList.remove('is-turning');
+        })
+        .fromTo(inspectImg, { rotationY: 88 }, {
+          rotationY: 0, duration: .29, ease: 'power2.out', immediateRender: false, clearProps: 'transform'
+        });
+    }
     let tiltTx = 0, tiltTy = 0, tiltCx = 0, tiltCy = 0, tiltRaf = null;
     function stepTilt() {
       tiltCx += (tiltTx - tiltCx) * 0.14;
@@ -2343,13 +2374,14 @@
       }
     }
     inspectStage.addEventListener('pointermove', e => {
-      if (e.pointerType === 'touch' || reducedMotion.matches || detailMotion?.isActive()) return;
+      if (e.pointerType === 'touch' || reducedMotion.matches || !inspectSide.hidden || detailMotion?.isActive()) return;
       const r = inspectStage.getBoundingClientRect();
       tiltTx = ((e.clientX - r.left) / r.width - 0.5) * 14;
       tiltTy = ((e.clientY - r.top) / r.height - 0.5) * -10;
       if (!tiltRaf) tiltRaf = requestAnimationFrame(stepTilt);
     });
     inspectStage.addEventListener('pointerleave', () => {
+      if (!inspectSide.hidden || detailMotion?.isActive()) return;
       tiltTx = 0; tiltTy = 0;
       if (!tiltRaf) tiltRaf = requestAnimationFrame(stepTilt);
     });
@@ -2367,6 +2399,13 @@
     let railMotion;
     let detailMotion;
     let railFrame;
+    let lastRailScroll = 0;
+    let railSettle;
+    const sway = { angle: 0 };
+    const swayTo = window.gsap?.quickTo(sway, 'angle', {
+      duration: .25, ease: 'power2.out',
+      onUpdate: () => apparelGrid.style.setProperty('--rail-sway', `${sway.angle}deg`)
+    });
 
     function measureRail() {
       if (!apparelGrid.clientWidth) return;
@@ -2397,7 +2436,6 @@
 
     function stopRailMotion() {
       railMotion?.kill();
-      if (railTarget !== null) railSlots[railTarget].querySelector('img').style.removeProperty('--rail-sway');
       railTarget = null;
       apparelGrid.classList.remove('is-snapping');
     }
@@ -2410,14 +2448,13 @@
 
       if (!animate || !window.gsap || reducedMotion.matches) {
         apparelGrid.scrollLeft = target;
+        lastRailScroll = apparelGrid.scrollLeft;
         drawRail();
         return;
       }
 
       const slide = { x: apparelGrid.scrollLeft };
-      const direction = Math.sign(target - slide.x);
-      if (!direction) return;
-      const photo = railSlots[index].querySelector('img');
+      if (target === slide.x) return;
       railTarget = index;
       apparelGrid.classList.add('is-snapping');
       railMotion = gsap.timeline({ onComplete: stopRailMotion });
@@ -2425,8 +2462,7 @@
         x: target, duration: 0.48, ease: 'power3.out',
         onUpdate: () => { apparelGrid.scrollLeft = slide.x; }
       }, 0);
-      railMotion.fromTo(photo, { '--rail-sway': `${direction * 7}deg` },
-        { '--rail-sway': '0deg', duration: 0.65, ease: 'back.out(2)' }, 0);
+
     }
 
     function buildApparelRail() {
@@ -2460,9 +2496,25 @@
         if (railFrame) return;
         railFrame = requestAnimationFrame(() => {
           railFrame = null;
+          const scroll = apparelGrid.scrollLeft;
+          const delta = scroll - lastRailScroll;
+          lastRailScroll = scroll;
+          if (swayTo && delta && !reducedMotion.matches) {
+            swayTo(Math.max(-6, Math.min(6, delta * .48)));
+            clearTimeout(railSettle);
+            railSettle = setTimeout(() => swayTo(0), 55);
+          }
           drawRail();
         });
       }, { passive: true });
+      reducedMotion.addEventListener('change', () => {
+        if (!reducedMotion.matches) return;
+        clearTimeout(railSettle);
+        swayTo?.tween.pause();
+        sway.angle = 0;
+        apparelGrid.style.removeProperty('--rail-sway');
+        resetInspectionMotion();
+      });
       railPrev.addEventListener('click', () => moveRail((railTarget ?? railIndex) - 1));
       railNext.addEventListener('click', () => moveRail((railTarget ?? railIndex) + 1));
       apparelGrid.addEventListener('keydown', event => {
@@ -2543,6 +2595,7 @@
         button.title = label;
         button.addEventListener('click', () => {
           if (button.getAttribute('aria-pressed') === 'true') return;
+          resetInspectionMotion();
           selectApparelColor(item, color);
           const src = garmentImage(item, color);
           inspectImg.src = src;
@@ -2585,7 +2638,7 @@
         if (['pd-01', 'pd-02', 'pd-04', 'sn-03', 'sn-04', 'sn-02'].includes(item.id)) {
           const sp = document.createElement('button');
           sp.type = 'button';
-          sp.className = 'static-plate';
+          sp.className = item.room === 'apparel' ? 'static-plate is-apparel' : 'static-plate';
           sp.innerHTML = `
             <img src="${item.img}" alt="${item.name}" loading="lazy">
             <div class="static-plate-row"><span>${item.code}</span><strong>$${item.price}</strong></div>
@@ -2707,7 +2760,6 @@
     let spiralVisible = true;
     let targetProg = 0, shownProg = 0;
     let targetDrag = 0, shownDrag = 0;
-    let vel = 0;
     let rafId = null, lastTs = 0;
     let frontPlate = 0, lastFront = -1;
 
@@ -2786,7 +2838,7 @@
 
       // Clean gallery photographic plate with crisp corner accent mark
       const g = ctx.createRadialGradient(c.width * 0.5, c.height * 0.44, 20, c.width * 0.5, c.height * 0.5, 460);
-      g.addColorStop(0, '#222833');
+      g.addColorStop(0, CATALOG[spec.idx].room === 'apparel' ? '#463a22' : '#222833');
       g.addColorStop(0.62, spec.tone);
       g.addColorStop(1, '#0B0E13');
       ctx.fillStyle = g;
@@ -2834,7 +2886,6 @@
         uniform float uTilt;
         out vec2 vUv;
         out float vDepth;
-        out float vEdge;
         void main() {
           float th = uAngle + (aUv.x - 0.5) * uArc;
           float x = sin(th) * uRadius;
@@ -2843,26 +2894,19 @@
           gl_Position = uProj * vec4(x, y, z, 1.0);
           vUv = aUv;
           vDepth = clamp((cos(th) + 1.0) * 0.5, 0.0, 1.0);
-          vEdge = abs(aUv.x - 0.5) * 2.0;
-        }
+          }
       `;
       const fs = `#version 300 es
         precision highp float;
         in vec2 vUv;
         in float vDepth;
-        in float vEdge;
         uniform sampler2D uTex;
-        uniform float uVel;
         out vec4 outColor;
         void main() {
-          float fringe = (0.0025 + min(abs(uVel) * 0.016, 0.02)) * pow(vEdge, 1.8);
-          float r = texture(uTex, vec2(clamp(vUv.x + fringe, 0.0, 1.0), vUv.y)).r;
-          float g = texture(uTex, vUv).g;
-          float b = texture(uTex, vec2(clamp(vUv.x - fringe, 0.0, 1.0), vUv.y)).b;
-          vec3 col = vec3(r, g, b);
+          vec3 col = texture(uTex, vUv).rgb;
           float shade = mix(0.16, 1.03, smoothstep(0.24, 0.92, vDepth));
           col *= shade;
-          float alpha = mix(0.18, 0.99, smoothstep(0.24, 0.80, vDepth));
+          float alpha = mix(0.18, 1.0, smoothstep(0.24, 0.80, vDepth));
           outColor = vec4(col, alpha);
         }
       `;
@@ -2872,7 +2916,7 @@
       gl.attachShader(prog, mk(gl.FRAGMENT_SHADER, fs));
       gl.linkProgram(prog);
 
-      const cols = 20, rows = 6, verts = [], idxs = [];
+      const cols = 21, rows = 6, verts = [], idxs = [];
       for (let r = 0; r <= rows; r++) for (let c = 0; c <= cols; c++) verts.push(c / cols, r / rows);
       for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
         const i = r * (cols + 1) + c;
@@ -2903,8 +2947,7 @@
         uHeight: gl.getUniformLocation(prog, 'uHeight'),
         uAngle: gl.getUniformLocation(prog, 'uAngle'),
         uYOff: gl.getUniformLocation(prog, 'uYOff'),
-        uTilt: gl.getUniformLocation(prog, 'uTilt'),
-        uVel: gl.getUniformLocation(prog, 'uVel')
+        uTilt: gl.getUniformLocation(prog, 'uTilt')
       };
 
       glCtx = { gl, prog, vao, count: idxs.length, textures, u };
@@ -2950,13 +2993,13 @@
       kickSpiral();
     }
 
-    function drawSpiral(p, dAngle, v) {
+    function drawSpiral(p, dAngle) {
       if (!glCtx) return;
       const { gl, prog, vao, count, textures, u } = glCtx;
       gl.clearColor(0, 0, 0, 0);
       gl.clear(gl.COLOR_BUFFER_BIT);
       gl.enable(gl.BLEND);
-      gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+      gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
       gl.useProgram(prog);
       gl.bindVertexArray(vao);
 
@@ -2987,7 +3030,6 @@
       gl.uniform1f(u.uArc, portrait ? 0.98 : 0.72);
       gl.uniform1f(u.uHeight, portrait ? 0.76 : 1.12);
       gl.uniform1f(u.uTilt, portrait ? 0.16 : 0.22);
-      gl.uniform1f(u.uVel, v);
 
       for (const it of list) {
         gl.uniform1f(u.uAngle, it.a);
@@ -3006,18 +3048,16 @@
     function tick(now) {
       const dt = Math.min(100, now - (lastTs || now));
       lastTs = now;
-      const prevP = shownProg, prevD = shownDrag;
       const f = 1 - Math.pow(1 - 0.14, dt / 16.667);
       shownProg += (targetProg - shownProg) * f;
       shownDrag += (targetDrag - shownDrag) * f;
-      vel = ((shownProg - prevP) * 8 + (shownDrag - prevD) * 2) / Math.max(0.008, dt / 1000);
 
-      drawSpiral(shownProg, shownDrag, vel);
+      drawSpiral(shownProg, shownDrag);
 
       if (Math.abs(targetProg - shownProg) < 0.0004 && Math.abs(targetDrag - shownDrag) < 0.0006) {
         shownProg = targetProg;
         shownDrag = targetDrag;
-        drawSpiral(shownProg, shownDrag, 0);
+        drawSpiral(shownProg, shownDrag);
         rafId = null;
         lastTs = 0;
       } else {
@@ -3097,11 +3137,23 @@
     const topbar = document.getElementById('topbar');
     addEventListener('scroll', () => topbar.classList.toggle('solid', scrollY > 40), { passive: true });
 
+    document.querySelector('[data-nav="lookbook"]').addEventListener('click', event => {
+      if (lookbookSec.getClientRects().length) return;
+      event.preventDefault();
+      document.getElementById('lookbook-static').scrollIntoView();
+      history.replaceState(null, '', '#lookbook-static');
+    });
+
     const navObs = new IntersectionObserver(entries => {
       entries.forEach(en => {
         if (!en.isIntersecting) return;
         const id = en.target.id === 'lookbook-static' ? 'lookbook' : en.target.id;
-        document.querySelectorAll('[data-nav]').forEach(a => a.classList.toggle('active', a.dataset.nav === id));
+        document.querySelectorAll('[data-nav]').forEach(link => {
+          const active = link.dataset.nav === id;
+          link.classList.toggle('active', active);
+          if (active) link.setAttribute('aria-current', 'location');
+          else link.removeAttribute('aria-current');
+        });
       });
     }, { rootMargin: '-40% 0px -45% 0px' });
     ['inicio', 'lookbook', 'lookbook-static', 'showroom', 'architecture', 'studio'].forEach(id => {
@@ -3149,6 +3201,7 @@
       photo.alt = '';
       const name = document.createElement('span');
       name.textContent = item.name;
+      if (item.room === 'apparel') photo.classList.add('has-garment-light');
       button.append(photo, name);
       if (showPrice) {
         const price = document.createElement('span');
@@ -3263,5 +3316,6 @@
     initCampaignMotion();
     applyGates();
   </script>
+  <script type="module" src="assets/campaign-motion.js"></script>
 </body>
 </html>
