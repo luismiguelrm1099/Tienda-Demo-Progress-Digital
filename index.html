@@ -170,7 +170,7 @@
       text-transform: uppercase;
     }
     .brand-subtitle {
-      color: var(--ink-secondary);
+      color: var(--accent);
       font-size: .62rem;
       font-weight: 500;
       line-height: 1;
@@ -188,7 +188,7 @@
       text-decoration: none;
       transition: color 180ms var(--ease-out);
     }
-    .nav-links a.active { color: var(--ink); }
+    .nav-links a.active { color: var(--accent); }
     @media (hover: hover) and (pointer: fine) {
       .nav-links a:hover { color: var(--ink); }
     }
@@ -397,7 +397,7 @@
     .spiral-count {
       font-family: var(--font-mono);
       font-size: 0.78rem;
-      color: var(--signal-bright);
+      color: var(--accent);
     }
     .spiral-piece-name {
       font-size: 0.92rem;
@@ -574,7 +574,7 @@
     .room-count {
       font-family: var(--font-mono);
       font-size: 0.78rem;
-      color: var(--ink-muted);
+      color: var(--accent);
     }
 
     /* Room Switcher Tabs (Apparel Rail / Footwear Wall) */
@@ -596,7 +596,7 @@
       position: relative;
       transition: color 180ms var(--ease-out);
     }
-    .room-tab[aria-selected="true"] { color: var(--ink); }
+    .room-tab[aria-selected="true"] { color: var(--accent); }
     .room-tab::after {
       content: "";
       position: absolute;
@@ -743,7 +743,7 @@
     .rail-nav:disabled { opacity: .35; cursor: default; }
     .rail-selection { text-align: center; min-width: 0; }
     .rail-selection strong { display: block; font-weight: 500; }
-    .rail-position { color: var(--ink-secondary); font: .72rem var(--font-mono); }
+    .rail-position { color: var(--accent); font: .72rem var(--font-mono); }
     .rail-hint { color: var(--ink-secondary); font-size: .78rem; text-align: center; margin-top: 6px; }
     .showroom-wrap:has(#viewApparel:not(.hidden)) .room-readout { display: none; }
 
@@ -1235,7 +1235,7 @@
       font-weight: 500;
       letter-spacing: -0.04em;
       line-height: 1;
-      color: var(--ink);
+      color: var(--accent);
       margin-bottom: 10px;
     }
     .ledger-label {
@@ -1267,7 +1267,7 @@
       margin-bottom: 24px;
     }
     .studio-brand-row img { width: 32px; height: 32px; object-fit: contain; }
-    .studio-brand-row span { font-size: 0.92rem; font-weight: 500; color: var(--ink); }
+    .studio-brand-row span { font-size: 0.92rem; font-weight: 500; color: var(--accent); }
 
     /* Hairline FAQ List */
     .faq-wrap {
@@ -1467,10 +1467,10 @@
       border-radius: 999px;
       background: var(--surface);
     }
-    .foot-credit strong { color: var(--ink); text-decoration: underline; text-decoration-color: var(--accent); }
+    .foot-credit strong { color: var(--accent); text-decoration: underline; text-decoration-color: var(--accent); }
     .foot-credit svg { color: var(--accent); }
     .foot-right a { text-decoration: none; color: var(--ink-secondary); }
-    .foot-right a:hover { color: var(--ink); }
+    .foot-right a:hover { color: var(--accent); }
 
     /* ================= RESPONSIVE ================= */
     @media (max-width: 1040px) {
