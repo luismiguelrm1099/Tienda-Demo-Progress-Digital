@@ -1423,7 +1423,19 @@
     .foot-left { display: inline-flex; align-items: center; gap: 10px; }
     .foot-left img { width: 22px; height: 22px; object-fit: contain; }
     .foot-left strong { color: var(--ink); font-weight: 500; }
-    .foot-right { display: flex; gap: 20px; }
+    .foot-right { display: flex; align-items: center; flex-wrap: wrap; gap: 12px 20px; }
+    .foot-right .foot-credit {
+      display: inline-flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 4px 8px;
+      padding: 7px 12px;
+      border: 1px solid var(--hairline-strong);
+      border-radius: 999px;
+      background: var(--surface);
+    }
+    .foot-credit strong { color: var(--ink); text-decoration: underline; text-decoration-color: var(--accent); }
+    .foot-credit svg { color: var(--accent); }
     .foot-right a { text-decoration: none; color: var(--ink-secondary); }
     .foot-right a:hover { color: var(--ink); }
 
@@ -1839,6 +1851,13 @@
       <div class="foot-right">
         <a href="#inicio" data-i18n="topLink">Back to top</a>
         <a href="#studio" data-i18n="contactLink">Start a project</a>
+        <a class="foot-credit" href="https://progressdigital.company">
+          <span>Website crafted by</span>
+          <strong>progressdigital.company</strong>
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+            <path d="M4 12 12 4M6 4h6v6"/>
+          </svg>
+        </a>
       </div>
     </div>
   </footer>
