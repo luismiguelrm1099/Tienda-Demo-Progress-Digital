@@ -697,7 +697,8 @@
       object-fit: contain;
       pointer-events: none;
       transform-origin: 50% 4%;
-      transform: translateY(var(--rail-drop, 0px)) rotateZ(var(--rail-sway, 0deg));
+      --rail-brush: 0deg;
+      transform: translateY(var(--rail-drop, 0px)) rotateZ(calc(var(--rail-sway, 0deg) + var(--rail-brush)));
       filter: drop-shadow(10px 22px 14px #0009);
     }
     .rail-controls {
@@ -2499,6 +2500,23 @@
         img.loading = 'lazy';
         img.decoding = 'async';
         img.src = lateralImage(item);
+        button.addEventListener('pointerenter', event => {
+          if (!window.gsap || reducedMotion.matches || event.pointerType !== 'mouse'
+              || event.buttons !== 0 || railTarget !== null) return;
+
+          const bounds = button.getBoundingClientRect();
+          const fromLeft = event.clientX < bounds.left + bounds.width / 2;
+          const angle = fromLeft ? -6 : 6;
+          gsap.to(img, {
+            keyframes: [
+              { '--rail-brush': `${angle}deg`, duration: .18, ease: 'power2.out' },
+              { '--rail-brush': `${angle * -.28}deg`, duration: .23, ease: 'sine.inOut' },
+              { '--rail-brush': '0deg', duration: .32, ease: 'sine.out' }
+            ],
+            overwrite: true,
+            onComplete: () => img.style.removeProperty('--rail-brush')
+          });
+        });
         button.append(img);
         button.addEventListener('click', () => {
           openPieceInRoom(CATALOG.indexOf(item), true, img.currentSrc || img.src);
@@ -2532,6 +2550,13 @@
         swayTo?.tween.pause();
         sway.angle = 0;
         apparelGrid.style.removeProperty('--rail-sway');
+        if (window.gsap) {
+          railSlots.forEach(slot => {
+            const photo = slot.querySelector('img');
+            gsap.killTweensOf(photo);
+            photo.style.removeProperty('--rail-brush');
+          });
+        }
         resetInspectionMotion();
       });
       railPrev.addEventListener('click', () => moveRail((railTarget ?? railIndex) - 1));
